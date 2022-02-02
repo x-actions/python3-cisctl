@@ -1,0 +1,2 @@
+skopeo
+jq

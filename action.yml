@@ -1,0 +1,35 @@
+name: 'Container Images Sync'
+description: 'Container Images Sync'
+author: 'xiexianbin <me@xiexianbin>'
+inputs:
+  GIT_TOKEN:
+    description: 'github token'
+    default: ''
+  GIT_ORG:
+    description: 'github org'
+    default: 'x-mirrors'
+  GIT_REPO:
+    description: 'github repo'
+    default: 'gcmirrors'
+  SRC_IMAGE_LIST_URL:
+    description: 'SRC_IMAGE_LIST_URL'
+    default: 'https://raw.githubusercontent.com/xiexianbin/gcmirrors/sync/images.txt'
+  DEST_REPO:
+    description: 'DEST register REPO'
+    default: 'docker.io/gcmirrors'
+  SRC_TRANSPORT:
+    description: 'SRC TRANSPORT'
+    default: 'docker'
+  DEST_TRANSPORT:
+    description: 'DEST TRANSPORT'
+    default: 'docker'
+  THREAD_POOL_NUM:
+    description: 'sync thread pool num'
+    default: 2
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
+branding:
+  color: 'blue'
+  icon: 'repeat'
