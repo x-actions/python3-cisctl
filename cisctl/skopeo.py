@@ -27,7 +27,7 @@ class Skopeo(object):
              src_tls_verify='false', dest_tls_verify='false'):
         """ Copy an IMAGE-NAME from one location to another
 
-        :param src_repo: gcr.io/google-containers
+        :param src_repo: k8s.gcr.io
         :param dest_repo: docker.io/gcmirrors
         :param name: pause-amd64
         :param tag: latest
@@ -37,7 +37,7 @@ class Skopeo(object):
         :param dest_tls_verify: false
 
         skopeo copy --insecure-policy --src-tls-verify=false --dest-tls-verify=false -q \
-        docker://gcr.io/google-containers/pause-amd64:latest docker://docker.io/gcmirrors/pause-amd64:latest
+        docker://k8s.gcr.io/pause-amd64:latest docker://docker.io/gcmirrors/pause-amd64:latest
         :return:
         """
         cmd = f'skopeo copy --insecure-policy --src-tls-verify={src_tls_verify} --dest-tls-verify={dest_tls_verify} ' \
@@ -48,7 +48,7 @@ class Skopeo(object):
              src_tls_verify='false', dest_tls_verify='false'):
         """ Synchronize one or more images from one location to another
 
-        :param src_repo: gcr.io/google-containers
+        :param src_repo: k8s.gcr.io
         :param dest_repo: docker.io/gcmirrors
         :param name: pause-amd64
         :param src_transport: docker
@@ -57,7 +57,7 @@ class Skopeo(object):
         :param dest_tls_verify: false
 
         skopeo sync --insecure-policy --src-tls-verify=false --dest-tls-verify=false --src docker --dest docker \
-        gcr.io/google-containers/pause-amd64 docker.io/gcmirrors
+        k8s.gcr.io/pause-amd64 docker.io/gcmirrors
         :return:
         """
         cmd = f'skopeo sync --insecure-policy --src-tls-verify={src_tls_verify} --dest-tls-verify={dest_tls_verify} ' \
@@ -68,11 +68,11 @@ class Skopeo(object):
         """ List tags in the transport/repository specified by the REPOSITORY-NAME
 
         :param transport: docker
-        :param repo: gcr.io/google-containers
+        :param repo: k8s.gcr.io
         :param name: pause-amd64
 
-        skopeo list-tags docker://gcr.io/google-containers/pause-amd64 | jq -c
-        :return: {"Repository":"gcr.io/google-containers/pause-amd64","Tags":["0.0.16"]}
+        skopeo list-tags docker://k8s.gcr.io/pause-amd64 | jq -c
+        :return: {"Repository":"k8s.gcr.io/pause-amd64","Tags":["0.0.16"]}
         """
         cmd = f'skopeo list-tags {transport}://{repo}/{name} | jq -c'
         code, stdout, stderr = self.bash.run(cmd, result=True)
@@ -89,7 +89,7 @@ class Skopeo(object):
     def do_sync(self, src_repo, dest_repo, name, src_transport='docker', dest_transport='docker'):
         """ Calculate src and dest repo tags difference set and sync
 
-        :param src_repo: gcr.io/google-containers
+        :param src_repo: k8s.gcr.io
         :param dest_repo: docker.io/gcmirrors
         :param name: pause-amd64
         :param src_transport: docker

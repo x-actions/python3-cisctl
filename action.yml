@@ -13,7 +13,7 @@ inputs:
     default: 'gcmirrors'
   SRC_IMAGE_LIST_URL:
     description: 'SRC_IMAGE_LIST_URL'
-    default: 'https://raw.githubusercontent.com/xiexianbin/gcmirrors/sync/images.txt'
+    default: 'https://raw.githubusercontent.com/x-mirrors/gcr.io/main/k8s.txt'
   DEST_REPO:
     description: 'DEST register REPO'
     default: 'docker.io/gcmirrors'
@@ -25,7 +25,10 @@ inputs:
     default: 'docker'
   THREAD_POOL_NUM:
     description: 'sync thread pool num'
-    default: 2
+    default: 5
+  LOG_LEVEL:
+    description: 'logger level, value [DEBUG|INFO|WARN|ERROR|FATAL]'
+    default: 'DEBUG'
 runs:
   using: 'docker'
   image: 'Dockerfile'

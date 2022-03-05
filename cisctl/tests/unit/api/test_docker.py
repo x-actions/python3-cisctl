@@ -10,3 +10,29 @@
 #   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #   License for the specific language governing permissions and limitations
 #   under the License.
+
+"""test python skopeo utils."""
+
+import unittest
+
+from cisctl.api.docker import DockerV2
+
+
+class DockerV2TestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.docker = DockerV2()
+
+    def test_last_tag(self):
+        name = 'gcmirrors/kube-apiserver'
+        print(self.docker.last_tag(name))
+
+        name = 'gcmirrors/no-exist'
+        print(self.docker.last_tag(name))
+
+    def test_last_tag(self):
+        name = 'gcmirrors/kube-apiserver'
+        print(self.docker.last_tag(name))
+
+        name = 'gcmirrors/no-exist'
+        print(self.docker.last_tag(name))

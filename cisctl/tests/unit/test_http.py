@@ -10,3 +10,23 @@
 #   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #   License for the specific language governing permissions and limitations
 #   under the License.
+
+"""test utils."""
+
+import unittest
+
+from cisctl import constants
+from cisctl import http
+
+
+class HTTPTestCase(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_http_get(self):
+        headers = {
+            'Content-Type': 'application/text'
+        }
+        result, resp = http.http_get(url=constants.SRC_IMAGE_LIST_URL, headers=headers)
+        print(resp.split('\n'))

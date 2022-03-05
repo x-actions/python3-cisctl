@@ -10,3 +10,19 @@
 #   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #   License for the specific language governing permissions and limitations
 #   under the License.
+
+"""test utils."""
+
+import unittest
+
+from cisctl import utils
+
+
+class UtilsTestCase(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_date2timestamp(self):
+        date_time = '2020-06-28T11:46:53.539425Z'
+        print(utils.date2timestamp(date_time))
