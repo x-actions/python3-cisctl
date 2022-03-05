@@ -13,23 +13,40 @@
 
 """python utils."""
 
-import datetime
-import os
-import traceback
+from datetime import datetime
 
-from cisctl.exception import CISException
-from cisctl.logger import logger
+from collections import Counter
 
 
 def now():
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 def parse_repo_and_name(image) -> (str, str):
     """ parse image to (repo, name)
 
-    :param image: gcr.io/google-containers/pause-amd64
-    :return (repo, name): ('gcr.io/google-containers', 'pause-amd64')
+    :param image: k8s.gcr.io/kube-apiserver or gcr.io/ml-pipeline/api-server
+    :return (repo, name): ('k8s.gcr.io', 'pause-amd64') or ('gcr.io/ml-pipeline', 'api-server')
     """
     t = image.split('/')
     return '/'.join(t[:-1]), t[-1]
+
+
+def sort_dict(d):
+    """ sort dict to Z-A
+
+    :param d: {'hello': 1, 'python': 5, 'world': 3}
+    :return [('python', 5), ('world', 3), ('hello', 1)]
+    """
+    return Counter(d).most_common()
+
+
+def date2timestamp(date_time) -> int:
+    """ convert date to millisecond timestamp
+
+    :param date_time: 2020-06-28T11:46:53.539425Z
+    :return timestamp: 1593316013539
+    """
+    TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
+    dt_utc = datetime.strptime(date_time, TIME_FORMAT)
+    return int(dt_utc.timestamp() * 1000)

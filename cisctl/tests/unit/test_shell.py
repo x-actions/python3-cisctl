@@ -11,23 +11,28 @@
 #   License for the specific language governing permissions and limitations
 #   under the License.
 
-"""test python skopeo utils."""
+"""test utils."""
 
 import unittest
 
-from cisctl.skopeo import Skopeo
+from cisctl.shell import CIS
 
 
-class SkopeoTestCase(unittest.TestCase):
+class CISTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.skopeo = Skopeo()
+        self.cis = CIS()
 
-    def test_do_sync(self):
-        src_repo = 'k8s.gcr.io'
-        dest_repo = 'docker.io/gcmirrors'
-        name = 'pause-amd64'
-        src_transport = 'docker'
-        dest_transport = 'docker'
+    def test_grc_sort_tags(self):
+        src_repo, name = 'k8s.gcr.io', 'kube-apiserver'
+        print(self.cis.grc_sort_tags(src_repo, name))
 
-        self.skopeo.do_sync(src_repo, dest_repo, name, src_transport, dest_transport)
+        src_repo, name = 'gcr.io/ml-pipeline', 'api-server'
+        print(self.cis.grc_sort_tags(src_repo, name))
+
+    def test_sync_image(self):
+        image = 'k8s.gcr.io/kube-apiserver'
+        print(self.cis.sync_image(image))
+
+        image = 'gcr.io/ml-pipeline/api-server'
+        print(self.cis.sync_image(image))

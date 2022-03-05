@@ -24,14 +24,15 @@ GIT_REPO = os.environ.get('GIT_REPO', 'gcmirrors')
 # skopeo args
 """
 list like:
-gcr.io/google-containers/pause-amd64
+k8s.gcr.io/pause-amd64
+gcr.io/ml-pipeline/api-server
 """
 SRC_IMAGE_LIST_URL = os.environ.get(
     'SRC_IMAGE_LIST_URL',
-    'https://raw.githubusercontent.com/xiexianbin/gcmirrors/sync/images.txt')
+    'https://raw.githubusercontent.com/x-mirrors/gcr.io/main/k8s.txt')
 DEST_REPO = os.environ.get('DEST_REPO', f'docker.io/{GIT_REPO}')
 SRC_TRANSPORT = os.environ.get('SRC_TRANSPORT', 'docker')
 DEST_TRANSPORT = os.environ.get('DEST_TRANSPORT', 'docker')
 
 # thread pool
-THREAD_POOL_NUM = int(os.environ.get('THREAD_POOL_NUM', 2))
+THREAD_POOL_NUM = int(os.environ.get('THREAD_POOL_NUM', 5))
