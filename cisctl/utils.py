@@ -25,7 +25,7 @@ def now():
 def parse_repo_and_name(image) -> (str, str):
     """ parse image to (repo, name)
 
-    :param image: k8s.gcr.io/kube-apiserver or gcr.io/ml-pipeline/api-server
+    :param image: k8s.gcr.io/pause or gcr.io/ml-pipeline/api-server
     :return (repo, name): ('k8s.gcr.io', 'pause-amd64') or ('gcr.io/ml-pipeline', 'api-server')
     """
     t = image.split('/')

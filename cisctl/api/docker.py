@@ -15,11 +15,13 @@
 
 from cisctl import http
 from cisctl import utils
+from cisctl.api import RegisterBaseAPIV2
 
 
-class DockerV2(object):
+class DockerV2(RegisterBaseAPIV2):
 
     def __init__(self, registry_url='https://registry.hub.docker.com'):
+        super().__init__()
         self.base_url = f'{registry_url}/v2/repositories'
 
     def delete_image(self, name, digest) -> bool:
@@ -110,3 +112,6 @@ class DockerV2(object):
                 return True, tag, timestamp
 
         return False, None, None
+
+    def sort_tags(self, name) -> (bool, []):
+        raise NotImplemented

@@ -14,12 +14,13 @@
 """python http utils."""
 
 import requests
-import requests.packages.urllib3
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import urllib3
 
 from cisctl.logger import logger
 
-requests.packages.urllib3.disable_warnings()
-
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 timeout = 200
 
 

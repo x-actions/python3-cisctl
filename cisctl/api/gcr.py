@@ -17,17 +17,22 @@ import uuid
 
 from cisctl import http
 from cisctl import utils
+from cisctl.api import RegisterBaseAPIV2
 
 
-class GoogleContainerRegisterV2(object):
+class GoogleContainerRegisterV2(RegisterBaseAPIV2):
 
-    def __init__(self, registry_url='https://gcr.io'):
-        self.base_url = f'{registry_url}/v2'
+    def __init__(self, registry_url='https://gcr.io', project=None):
+        super().__init__()
+        if project:
+            self.base_url = f'{registry_url}/v2/{project}'
+        else:
+            self.base_url = f'{registry_url}/v2'
 
-    def list_tags(self, name) -> {}:
+    def list_tags(self, name, n=10, next='') -> {}:  # noqa
         """ list special image tags
         e.g.
-          gcloud container images list-tags k8s.gcr.io/kube-apiserver --log-http
+          gcloud container images list-tags k8s.gcr.io/pause --log-http
           curl -vv -H "user-agent: google-cloud-sdk //containerregistry/client:gcloud.py gcloud/313.0.1 command/gcloud.container.images.list-tags invocation-id/104af80f714b4c01a820b7a7874232c7 environment/None environment-version/None interactive/False from-script/False python/2.7.17 term/xterm-256color (Macintosh; Intel Mac OS X 21.3.0)" https://k8s.gcr.io/v2/kube-apiserver/tags/list  # noqa
         ref:
           - https://cloud.google.com/sdk/gcloud/reference/container/images/list-tags#GCLOUD-WIDE-FLAGS
@@ -69,7 +74,7 @@ class GoogleContainerRegisterV2(object):
 
         return http.http_get(url, None, headers)
 
-    def sort_tags(self, name) -> []:
+    def sort_tags(self, name) -> (bool, []):
         """ sort image tags dict to Z-A
 
         :param name: kube-apiserver or ml-pipeline/api-server

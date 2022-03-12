@@ -35,5 +35,5 @@ SRC_TRANSPORT = os.environ.get('SRC_TRANSPORT', 'docker')
 DEST_TRANSPORT = os.environ.get('DEST_TRANSPORT', 'docker')
 
 # thread pool
-THREAD_POOL_NUM = int(os.environ.get('THREAD_POOL_NUM', 5))
+THREAD_POOL_NUM = int(os.environ.get('THREAD_POOL_NUM', 2))
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG')

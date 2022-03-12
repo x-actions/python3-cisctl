@@ -67,6 +67,22 @@ cisctl
 python3 -m unittest cisctl.tests.unit.test_skopeo.SkopeoTestCase.test_do_sync
 ```
 
+- [Docker API Rate Limiting](https://docs.docker.com/docker-hub/api/latest/#tag/rate-limiting)
+
+- X-RateLimit-Limit - The limit of requests per minute.
+- X-RateLimit-Remaining - The remaining amount of calls within the limit period.
+- X-RateLimit-Reset - The unix timestamp of when the remaining resets.
+
+If you have hit the limit, you will receive a response status of 429 and the X-Retry-After header in the response.
+
+The X-Retry-After header is a unix timestamp of when you can call the API again.
+
+```
+< x-ratelimit-limit: 180
+< x-ratelimit-reset: 1646881125
+< x-ratelimit-remaining: 180
+```
+
 ## ref
 
 - [install skopeo](https://www.xiexianbin.cn/container/tools/skopeo/)

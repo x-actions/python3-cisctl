@@ -10,7 +10,7 @@ export SRC_IMAGE_LIST_URL=${SRC_IMAGE_LIST_URL}
 export DEST_REPO=${DEST_REPO}
 export SRC_TRANSPORT=${SRC_TRANSPORT}
 export DEST_TRANSPORT=${DEST_TRANSPORT}
-export THREAD_POOL_NUM=${THREAD_POOL_NUM:-5}
+export THREAD_POOL_NUM=${THREAD_POOL_NUM:-2}
 export LOG_LEVEL=${LOG_LEVEL:-"DEBUG"}
 
 echo "## Check Package Version ##################"

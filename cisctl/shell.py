@@ -21,6 +21,7 @@ from cisctl import constants, http
 from cisctl import utils
 from cisctl.api.docker import DockerV2
 from cisctl.api.gcr import GoogleContainerRegisterV2
+from cisctl.api.quay import QuayRegisterV2
 from cisctl.logger import logger
 from cisctl.render import Render
 from cisctl.skopeo import Skopeo
@@ -31,34 +32,46 @@ class CIS(object):
     def __init__(self):
         self._skopeo = Skopeo()
         self._docker = DockerV2()
-        self._k8s_grc = GoogleContainerRegisterV2(registry_url='https://k8s.gcr.io')
-        self._gcr = GoogleContainerRegisterV2()
+        self._source_registry = None
 
-    def grc_sort_tags(self, repo, name):
-        _raw_name = name
-        if repo.startswith('k8s.gcr.io'):
-            _grc = self._k8s_grc
-        else:
-            _grc = self._gcr
-            if '/' in repo:
-                _raw_name = f'{repo.split("/")[-1]}/{name}'
-        return _grc.sort_tags(_raw_name)
+    def init_source_registry_api(self, registry_url, repo=None):
+        """ init source registry api
+
+        :param registry_url: k8s.gcr.io or gcr.io or quay.io
+        :param repo: is google cloud project
+            - None : k8s.gcr.io/pause
+            - ingress-nginx : k8s.gcr.io/ingress-nginx/controller
+            - ml-pipeline : gcr.io/ml-pipeline/api-server
+            - metallb : quay.io/metallb/controller
+        :return: None
+        """
+        if self._source_registry is None:
+            if registry_url.startswith('k8s.gcr.io'):
+                self._source_registry = GoogleContainerRegisterV2(registry_url='https://k8s.gcr.io', project=repo)
+            elif registry_url.startswith('gcr.io'):
+                self._source_registry = GoogleContainerRegisterV2(registry_url='https://gcr.io', project=repo)
+            elif registry_url.startswith('quay.io'):
+                self._source_registry = QuayRegisterV2(registry_url='https://gcr.io', repo=repo)
 
     def sync_image(self, image):
         """ sync image
 
-        :param image: k8s.gcr.io/kube-apiserver or gcr.io/ml-pipeline/api-server
+        :param image: k8s.gcr.io/pause or gcr.io/ml-pipeline/api-server or quay.io/metallb/controller
         """
-        logger.debug('Begin to sync image: [{}], sub pid is [{}]'.format(image, os.getpid()))
+        logger.debug(f'Begin to sync image: [{image}], sub pid is [{os.getpid()}]')
         src_repo, name = utils.parse_repo_and_name(image)
+        if '/' in src_repo:
+            registry_url, repo = src_repo.split('/')
+            self.init_source_registry_api(registry_url, repo)
+        else:
+            self.init_source_registry_api(src_repo)
 
         _, last_tag, last_timestamp = self._docker.last_tag(f'{constants.DEST_REPO}/{name}')
-
-        _, gcr_sort_tags = self.grc_sort_tags(src_repo, name)
-        gcr_sort_tags.reverse()
+        _, src_sort_tags = self._source_registry.sort_tags(name)
+        src_sort_tags.reverse()
         flag = False
 
-        for (_tag, _) in gcr_sort_tags:
+        for (_tag, _) in src_sort_tags:
             if flag is False and last_tag is None:
                 flag = True
 
@@ -77,7 +90,7 @@ class CIS(object):
                 src_transport=constants.SRC_TRANSPORT,
                 dest_transport=constants.DEST_TRANSPORT)
 
-        return f'{"@@".join([_tag for _, _tag in gcr_sort_tags])}@@@{name}'
+        return f'{"@@".join([_tag for (_tag, _) in src_sort_tags])}@@@{name}'
 
     def do_sync(self):
         headers = {
@@ -87,11 +100,14 @@ class CIS(object):
         _target_images_list = resp.split('\n')
         _result_images_list = []
 
-        logger.info('init multiprocessing pool, main pid is [{}]'.format(os.getpid()))
+        logger.info(f'init multiprocessing pool, main pid is [{os.getpid()}]')
         p = Pool(constants.THREAD_POOL_NUM)
         subprocess_result = []
         for image in _target_images_list:
             image = image.replace('\n', '')
+            # skip empty and '#" image
+            if image == '' or '#' in image:
+                continue
             if image.startswith('gcr.io/google-containers'):
                 image = image.replace('gcr.io/google-containers', 'k8s.gcr.io')
             subprocess_result.append(p.apply_async(self.sync_image, args=(image,)))
@@ -112,7 +128,8 @@ class CIS(object):
         p.join()
         logger.info('All subprocess done.')
 
-        src_org, src_repo, _ = _target_images_list[0].split('/')
+        _target_info = _target_images_list[0].split('/')
+        src_org, src_repo = _target_info[0], _target_info[1]
         return _result_images_list, src_org, src_repo
 
 

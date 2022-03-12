@@ -10,3 +10,15 @@
 #   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #   License for the specific language governing permissions and limitations
 #   under the License.
+
+
+class RegisterBaseAPIV2(object):
+
+    def __init__(self):
+        pass
+
+    def list_tags(self, name, **kwargs):
+        raise NotImplemented
+
+    def sort_tags(self, name) -> (bool, []):
+        raise NotImplemented

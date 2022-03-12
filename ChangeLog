@@ -1,0 +1,8 @@
+CHANGES
+=======
+
+v0.1.0
+------
+
+* feautre: add docker register v2 api and gcr api
+* init commit

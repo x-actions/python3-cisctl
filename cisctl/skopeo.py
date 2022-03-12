@@ -64,11 +64,11 @@ class Skopeo(object):
               f'--src {src_transport} --dest {dest_transport} {src_repo}/{name} {dest_repo}'
         _ = self.bash.run(cmd)
 
-    def list_tags(self, transport, repo, name):
+    def list_tags(self, transport, repo, name) -> {}:
         """ List tags in the transport/repository specified by the REPOSITORY-NAME
 
         :param transport: docker
-        :param repo: k8s.gcr.io
+        :param repo: k8s.gcr.io or quay.io/metallb
         :param name: pause-amd64
 
         skopeo list-tags docker://k8s.gcr.io/pause-amd64 | jq -c
@@ -84,7 +84,7 @@ class Skopeo(object):
         else:
             result = {}
 
-        return result.get('Tags', [])
+        return result
 
     def do_sync(self, src_repo, dest_repo, name, src_transport='docker', dest_transport='docker'):
         """ Calculate src and dest repo tags difference set and sync
@@ -96,8 +96,8 @@ class Skopeo(object):
         :param dest_transport: docker
         :return:
         """
-        src_tags = self.list_tags(transport=src_transport, repo=src_repo, name=name)
-        dest_tags = self.list_tags(transport=dest_transport, repo=dest_repo, name=name)
+        src_tags = self.list_tags(transport=src_transport, repo=src_repo, name=name).get('Tags', [])
+        dest_tags = self.list_tags(transport=dest_transport, repo=dest_repo, name=name).get('Tags', [])
 
         # full tags sync
         if len(dest_tags) == 0:

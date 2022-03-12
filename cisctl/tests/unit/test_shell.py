@@ -25,14 +25,29 @@ class CISTestCase(unittest.TestCase):
 
     def test_grc_sort_tags(self):
         src_repo, name = 'k8s.gcr.io', 'kube-apiserver'
-        print(self.cis.grc_sort_tags(src_repo, name))
+        self.cis.init_source_registry_api(src_repo, None)
+        print(self.cis.grc_sort_tags(name))
 
         src_repo, name = 'gcr.io/ml-pipeline', 'api-server'
-        print(self.cis.grc_sort_tags(src_repo, name))
+        if '/' in src_repo:
+            registry_url, repo = src_repo.split('/')
+            self.cis.init_source_registry_api(registry_url, repo)
+        else:
+            self.cis.init_source_registry_api(src_repo)
+        print(self.cis.grc_sort_tags(name))
 
-    def test_sync_image(self):
-        image = 'k8s.gcr.io/kube-apiserver'
+    def test_sync_image_k8s_pause(self):
+        image = 'k8s.gcr.io/pause'
         print(self.cis.sync_image(image))
 
+    def test_sync_image_ml(self):
         image = 'gcr.io/ml-pipeline/api-server'
+        print(self.cis.sync_image(image))
+
+    def test_sync_image_nginx_ingress_controller(self):
+        image = 'k8s.gcr.io/ingress-nginx/controller'
+        print(self.cis.sync_image(image))
+
+    def test_sync_image_metallb_controller(self):
+        image = 'quay.io/metallb/controller'
         print(self.cis.sync_image(image))

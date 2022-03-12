@@ -25,7 +25,7 @@ inputs:
     default: 'docker'
   THREAD_POOL_NUM:
     description: 'sync thread pool num'
-    default: 5
+    default: 2
   LOG_LEVEL:
     description: 'logger level, value [DEBUG|INFO|WARN|ERROR|FATAL]'
     default: 'DEBUG'
