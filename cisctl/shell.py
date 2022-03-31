@@ -14,6 +14,7 @@
 """sync containers image from one register to others."""
 
 import os
+import time
 
 from multiprocessing import Pool
 
@@ -66,9 +67,15 @@ class CIS(object):
         else:
             self.init_source_registry_api(src_repo)
 
-        _, last_tag, last_timestamp = self._docker.last_tag(f'{constants.DEST_REPO}/{name}')
         _, src_sort_tags = self._source_registry.sort_tags(name)
         src_sort_tags.reverse()
+
+        result, last_tag, last_timestamp = self._docker.last_tag(f'{constants.DEST_REPO}/{name}')
+        if result is False and last_tag is None and last_timestamp is None:
+            logger.warning(f'sync image {image}, docker api limit, exist.')
+            # the result is need to sync
+            return f'{"@@".join([_tag for (_tag, _) in src_sort_tags])}@@@{name}'
+
         flag = False
 
         for (_tag, _) in src_sort_tags:
@@ -98,16 +105,33 @@ class CIS(object):
         }
         result, resp = http.http_get(url=constants.SRC_IMAGE_LIST_URL, headers=headers)
         _target_images_list = resp.split('\n')
-        _result_images_list = []
+        target_images_list = []
+        for image in _target_images_list:
+            image = image.replace('\n', '')
+            # skip empty and '#" image
+            if image == '' or image.startswith("#"):
+                continue
+            target_images_list.append(image)
+        result_images_list = []
 
         logger.info(f'init multiprocessing pool, main pid is [{os.getpid()}]')
         p = Pool(constants.THREAD_POOL_NUM)
         subprocess_result = []
-        for image in _target_images_list:
-            image = image.replace('\n', '')
-            # skip empty and '#" image
-            if image == '' or '#' in image:
-                continue
+
+        # fix Docker API Rate Limiting
+        if len(target_images_list) > 180 and constants.DEST_REPO.startswith("docker.io"):
+            interval_hour = 24 / constants.JOB_BATCH_COUNT
+            batch_num = int(time.localtime().tm_hour / interval_hour)
+            images_count_per_job = int(len(target_images_list) / constants.JOB_BATCH_COUNT) + 1
+
+            start_index = batch_num * images_count_per_job
+            end_index = (batch_num + 1) * images_count_per_job - 1
+            target_images_list = target_images_list[start_index:end_index+1]
+            logger.info(f'BATCH Jobs matched, start_index is {start_index}, end_index is {end_index}, '
+                        f'batch_num is {batch_num}, images_count_per_job is {images_count_per_job}, '
+                        f'begin to sync image size is {len(target_images_list)}')
+
+        for image in target_images_list:
             if image.startswith('gcr.io/google-containers'):
                 image = image.replace('gcr.io/google-containers', 'k8s.gcr.io')
             subprocess_result.append(p.apply_async(self.sync_image, args=(image,)))
@@ -117,7 +141,7 @@ class CIS(object):
             r = r.split('@@@')
             src_image_tags = r[0].split('@@')
 
-            _result_images_list.append({
+            result_images_list.append({
                 'name': r[1],
                 'tags': src_image_tags,
                 'tags_count': len(src_image_tags),
@@ -128,9 +152,9 @@ class CIS(object):
         p.join()
         logger.info('All subprocess done.')
 
-        _target_info = _target_images_list[0].split('/')
+        _target_info = target_images_list[0].split('/')
         src_org, src_repo = _target_info[0], _target_info[1]
-        return _result_images_list, src_org, src_repo
+        return result_images_list, src_org, src_repo
 
 
 def main():

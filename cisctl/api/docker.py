@@ -110,6 +110,8 @@ class DockerV2(RegisterBaseAPIV2):
             if len(sort_tags):
                 tag, timestamp = sort_tags[0]
                 return True, tag, timestamp
+            else:
+                return True, None, None
 
         return False, None, None
 

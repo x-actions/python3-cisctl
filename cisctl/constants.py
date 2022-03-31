@@ -37,3 +37,6 @@ DEST_TRANSPORT = os.environ.get('DEST_TRANSPORT', 'docker')
 # thread pool
 THREAD_POOL_NUM = int(os.environ.get('THREAD_POOL_NUM', 2))
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG')
+
+# Only work when source is docker, because https://docs.docker.com/docker-hub/api/latest/#tag/rate-limiting
+JOB_BATCH_COUNT = int(os.environ.get('JOB_BATCH_COUNT', 3))
