@@ -25,11 +25,39 @@ def now():
 def parse_repo_and_name(image) -> (str, str):
     """ parse image to (repo, name)
 
-    :param image: k8s.gcr.io/pause or gcr.io/ml-pipeline/api-server
-    :return (repo, name): ('k8s.gcr.io', 'pause-amd64') or ('gcr.io/ml-pipeline', 'api-server')
+    :param image: one of
+        - k8s.gcr.io/pause
+        - gcr.io/ml-pipeline/api-server
+        - quay.io/metallb/controller
+        - gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
+    :return (repo, name): one of
+        - ('k8s.gcr.io', 'pause-amd64')
+        - ('gcr.io/ml-pipeline', 'api-server')
+        - ('quay.io/metallb', 'controller')
+        - ('gcr.io/knative-releases/knative.dev/eventing/cmd', 'webhook')
     """
     t = image.split('/')
     return '/'.join(t[:-1]), t[-1]
+
+
+def parse_registry_url_and_project(src_repo) -> (str, str):
+    """ parse image to (registry_url, repo)
+
+    :param src_repo: one of
+        - k8s.gcr.io
+        - gcr.io/ml-pipeline
+        - quay.io/metallb
+        - gcr.io/knative-releases/knative.dev/eventing/cmd
+    :return (repo, name): one of
+        - ('k8s.gcr.io', None)
+        - ('gcr.io', 'ml-pipeline')
+        - ('quay.io', 'metallb')
+        - ('gcr.io', 'knative-releases/knative.dev/eventing/cmd')
+    """
+    t = src_repo.split('/')
+    if len(t) == 1:
+        return t[0], None
+    return t[0], '/'.join(t[1:])
 
 
 def sort_dict(d):
@@ -50,3 +78,20 @@ def date2timestamp(date_time) -> int:
     TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
     dt_utc = datetime.strptime(date_time, TIME_FORMAT)
     return int(dt_utc.timestamp() * 1000)
+
+
+def generate_dest_name(src_repo, name):
+    """ generate dest repo image name
+
+    :param src_repo: one of
+        - k8s.gcr.io
+        - gcr.io/ml-pipeline
+        - quay.io/metallb
+        - gcr.io/knative-releases/knative.dev/eventing/cmd
+    :param name: image name
+    :return dest_image_name
+    """
+    if 'knative-releases/knative.dev' in src_repo:
+        return f'{src_repo.split("/")[3]}-{name}'
+
+    return name

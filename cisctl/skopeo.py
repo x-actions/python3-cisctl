@@ -23,7 +23,7 @@ class Skopeo(object):
     def __init__(self):
         self.bash = Bash()
 
-    def copy(self, src_repo, dest_repo, name, tag, src_transport='docker', dest_transport='docker',
+    def copy(self, src_repo, dest_repo, name, tag, dest_name=None, src_transport='docker', dest_transport='docker',
              src_tls_verify='false', dest_tls_verify='false'):
         """ Copy an IMAGE-NAME from one location to another
 
@@ -31,6 +31,7 @@ class Skopeo(object):
         :param dest_repo: docker.io/gcmirrors
         :param name: pause-amd64
         :param tag: latest
+        :param dest_name: default list name
         :param src_transport: docker
         :param dest_transport: docker
         :param src_tls_verify: false
@@ -40,8 +41,10 @@ class Skopeo(object):
         docker://k8s.gcr.io/pause-amd64:latest docker://docker.io/gcmirrors/pause-amd64:latest
         :return:
         """
+        if dest_name is None:
+            dest_name = name
         cmd = f'skopeo copy --insecure-policy --src-tls-verify={src_tls_verify} --dest-tls-verify={dest_tls_verify} ' \
-              f'-q {src_transport}://{src_repo}/{name}:{tag} {dest_transport}://{dest_repo}/{name}:{tag}'
+              f'-q {src_transport}://{src_repo}/{name}:{tag} {dest_transport}://{dest_repo}/{dest_name}:{tag}'
         _ = self.bash.run(cmd)
 
     def sync(self, src_repo, dest_repo, name, src_transport='docker', dest_transport='docker',

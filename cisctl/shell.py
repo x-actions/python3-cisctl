@@ -44,25 +44,31 @@ class CIS(object):
             - ingress-nginx : k8s.gcr.io/ingress-nginx/controller
             - ml-pipeline : gcr.io/ml-pipeline/api-server
             - metallb : quay.io/metallb/controller
+            - knative-releases/knative.dev/eventing/cmd : gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
         :return: None
         """
         if self._source_registry is None:
-            if registry_url.startswith('k8s.gcr.io'):
-                self._source_registry = GoogleContainerRegisterV2(registry_url='https://k8s.gcr.io', project=repo)
-            elif registry_url.startswith('gcr.io'):
+            if registry_url.startswith('gcr.io'):
                 self._source_registry = GoogleContainerRegisterV2(registry_url='https://gcr.io', project=repo)
+            elif registry_url.startswith('k8s.gcr.io'):
+                self._source_registry = GoogleContainerRegisterV2(registry_url='https://k8s.gcr.io', project=repo)
             elif registry_url.startswith('quay.io'):
-                self._source_registry = QuayRegisterV2(registry_url='https://gcr.io', repo=repo)
+                self._source_registry = QuayRegisterV2(registry_url='https://quay.io', repo=repo)
 
     def sync_image(self, image):
         """ sync image
 
-        :param image: k8s.gcr.io/pause or gcr.io/ml-pipeline/api-server or quay.io/metallb/controller
+        :param image: one of
+          - k8s.gcr.io/pause
+          - gcr.io/ml-pipeline/api-server
+          - quay.io/metallb/controller
+          - gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
         """
         logger.debug(f'Begin to sync image: [{image}], sub pid is [{os.getpid()}]')
         src_repo, name = utils.parse_repo_and_name(image)
+        dest_name = utils.generate_dest_name(src_repo, name)
         if '/' in src_repo:
-            registry_url, repo = src_repo.split('/')
+            registry_url, repo = utils.parse_registry_url_and_project(src_repo)
             self.init_source_registry_api(registry_url, repo)
         else:
             self.init_source_registry_api(src_repo)
@@ -70,11 +76,11 @@ class CIS(object):
         _, src_sort_tags = self._source_registry.sort_tags(name)
         src_sort_tags.reverse()
 
-        result, last_tag, last_timestamp = self._docker.last_tag(f'{constants.DEST_REPO}/{name}')
+        result, last_tag, last_timestamp = self._docker.last_tag(f'{constants.DEST_REPO}/{dest_name}')
         if result is False and last_tag is None and last_timestamp is None:
             logger.warning(f'sync image {image}, docker api limit, exist.')
             # the result is need to sync
-            return f'{"@@".join([_tag for (_tag, _) in src_sort_tags])}@@@{name}'
+            return f'{"@@".join([_tag for (_tag, _) in src_sort_tags])}@@@{dest_name}'
 
         flag = False
 
@@ -94,10 +100,11 @@ class CIS(object):
                 dest_repo=constants.DEST_REPO,
                 name=name,
                 tag=_tag,
+                dest_name=dest_name,
                 src_transport=constants.SRC_TRANSPORT,
                 dest_transport=constants.DEST_TRANSPORT)
 
-        return f'{"@@".join([_tag for (_tag, _) in src_sort_tags])}@@@{name}'
+        return f'{"@@".join([_tag for (_tag, _) in src_sort_tags])}@@@{dest_name}'
 
     def do_sync(self):
         headers = {
@@ -139,6 +146,9 @@ class CIS(object):
         for result in subprocess_result:
             r = result.get()
             r = r.split('@@@')
+            if len(r) != 2:
+                continue
+
             src_image_tags = r[0].split('@@')
 
             result_images_list.append({
