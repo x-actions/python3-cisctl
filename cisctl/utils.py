@@ -91,7 +91,9 @@ def generate_dest_name(src_repo, name):
     :param name: image name
     :return dest_image_name
     """
-    if 'knative-releases/knative.dev' in src_repo:
-        return f'{src_repo.split("/")[3]}-{name}'
+    if src_repo.endswith('/cmd'):
+        t = src_repo.split('/')
+        if t[-1] == 'cmd':
+            return f'{t[-2]}-{name}'
 
     return name
