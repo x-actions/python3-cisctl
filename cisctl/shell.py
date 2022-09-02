@@ -91,7 +91,7 @@ class CIS(object):
             # skip condition:
             #   1. already sync
             #   2. if src_uploaded_timestamp < last_timestamp: skip, else src is update, do sync
-            if flag is False or (last_timestamp is not None and src_uploaded_timestamp < last_timestamp):
+            if flag is False or (last_timestamp is not None and int(src_uploaded_timestamp) < int(last_timestamp)):
                 continue
 
             self._skopeo.copy(
