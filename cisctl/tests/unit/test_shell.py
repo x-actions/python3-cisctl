@@ -51,3 +51,7 @@ class CISTestCase(unittest.TestCase):
     def test_sync_image_metallb_controller(self):
         image = 'quay.io/metallb/controller'
         print(self.cis.sync_image(image))
+
+    def test_sync_image_knative_serving_webhook(self):
+        image = 'gcr.io/knative-releases/knative.dev/serving/cmd/webhook'
+        print(self.cis.sync_image(image))

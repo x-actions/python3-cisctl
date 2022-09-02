@@ -1,5 +1,5 @@
 # create by xiexianbin, Container Images Sync
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Dockerfile build cache 
 ENV REFRESHED_AT 2022-02-01
@@ -21,13 +21,6 @@ ENV LANGUAGE en_US.UTF-8
 
 # apt install -y docker-ce docker-ce-cli containerd.io systemctl start docker
 RUN apt update && \
-    apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
-    . /etc/os-release && \
-    echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list && \
-    curl -fsSL https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | apt-key add - && \
-    apt update && \
     apt install -y git python3 python3-pip skopeo jq && \
     cd ~ && \
     git clone https://github.com/x-actions/python3-cisctl.git && \
