@@ -84,10 +84,8 @@ class GoogleContainerRegisterV2(RegisterBaseAPIV2):
         if result:
             _tag_dict = {}
             for digest, v in resp.get('manifest', {}).items():
-                if len(v['tag']) == 1:
-                    _tag_dict[v['tag'][0]] = v['timeUploadedMs']
-                if len(v['tag']) > 1 and len(v['tag'][0]) < len(v['tag'][1]):
-                    _tag_dict[v['tag'][0]] = v['timeUploadedMs']
+                for tag_name in v['tag']:
+                    _tag_dict[tag_name] = v['timeUploadedMs']
 
             tag_list = utils.sort_dict(_tag_dict)
             if len(tag_list):

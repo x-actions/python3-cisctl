@@ -83,23 +83,22 @@ class CIS(object):
             return f'{"@@".join([_tag for (_tag, _) in src_sort_tags])}@@@{dest_name}'
 
         flag = False
-
-        for (_tag, _) in src_sort_tags:
-            if flag is False and last_tag is None:
-                flag = True
-
-            if flag is False and _tag == last_tag:
-                flag = True
-                continue
-
+        for (src_tag, src_uploaded_timestamp) in src_sort_tags:
             if flag is False:
+                if last_tag is None or src_tag == last_tag:
+                    flag = True
+
+            # skip condition:
+            #   1. already sync
+            #   2. if src_uploaded_timestamp < last_timestamp: skip, else src is update, do sync
+            if flag is False or (last_timestamp is not None and int(src_uploaded_timestamp) < int(last_timestamp)):
                 continue
 
             self._skopeo.copy(
                 src_repo=src_repo,
                 dest_repo=constants.DEST_REPO,
                 name=name,
-                tag=_tag,
+                tag=src_tag,
                 dest_name=dest_name,
                 src_transport=constants.SRC_TRANSPORT,
                 dest_transport=constants.DEST_TRANSPORT)

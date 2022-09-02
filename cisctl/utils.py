@@ -15,7 +15,12 @@
 
 from datetime import datetime
 
-from collections import Counter
+import collections
+try:
+    from collections import abc
+    collections.Counter = abc.Counter
+except Exception as _:
+    pass
 
 
 def now():
@@ -66,7 +71,7 @@ def sort_dict(d):
     :param d: {'hello': 1, 'python': 5, 'world': 3}
     :return [('python', 5), ('world', 3), ('hello', 1)]
     """
-    return Counter(d).most_common()
+    return collections.Counter(d).most_common()
 
 
 def date2timestamp(date_time) -> int:
