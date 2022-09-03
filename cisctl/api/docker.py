@@ -112,8 +112,21 @@ class DockerV2(RegisterBaseAPIV2):
                 return True, tag, timestamp
             else:
                 return True, None, None
+        else:
+            if type(resp) is dict:
+                if 'message' in resp.keys() and 'object not found' in resp['message']:
+                    # if image not in docker hub, respo is:
+                    # {
+                    #   "message": "object not found",
+                    #   "errinfo": {
+                    #     "namespace": "gcriodistroless",
+                    #     "repository": "base-debian9"
+                    #   }
+                    # }
+                    return True, None, 0
 
-        return False, None, None
+                # may be need check 429 Too Many Requests
+            return False, None, None
 
     def sort_tags(self, name) -> (bool, []):
         raise NotImplemented

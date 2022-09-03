@@ -55,7 +55,10 @@ def _http_request(method, url, headers=None, data=None):
             content = resp.content[:100] if resp.content else ''
             logger.error(f'http request error! type: {method}, url: {url}, data: {str(data)}, '
                          f'response_status_code: {resp.status_code}, response_content: {content}')
-            return False, None
+            if headers.get('Content-Type', None) == 'application/json':
+                return False, resp.json()
+            else:
+                return False, resp.text
 
         logger.debug(f'http request success! type: {method}, url: {url}, data: {str(data)}, '
                      f'response_status_code: {resp.status_code}, response_content: {resp.text}')
