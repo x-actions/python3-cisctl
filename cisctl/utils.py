@@ -19,7 +19,7 @@ import collections
 try:
     from collections import abc
     collections.Counter = abc.Counter
-except Exception as _:
+except Exception as _:  # noqa
     pass
 
 
