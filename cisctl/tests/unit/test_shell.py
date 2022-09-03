@@ -55,3 +55,7 @@ class CISTestCase(unittest.TestCase):
     def test_sync_image_knative_serving_webhook(self):
         image = 'gcr.io/knative-releases/knative.dev/serving/cmd/webhook'
         print(self.cis.sync_image(image))
+
+    def test_sync_image_distroless_base(self):
+        image = 'gcr.io/distroless/base'
+        print(self.cis.sync_image(image))
