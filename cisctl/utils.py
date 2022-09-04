@@ -93,16 +93,16 @@ def generate_dest_name(src_repo, name):
         - gcr.io/ml-pipeline
         - quay.io/metallb
         - gcr.io/knative-releases/knative.dev/eventing/cmd
-        - gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory #/channel_controller -> in_memory-channel_controller
+        - gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory # channel_controller -> eventing-in_memory-channel_controller
     :param name: image name
     :return dest_image_name
     """
-    if src_repo.endswith('/cmd'):
+    if '/cmd' in src_repo:
         t = src_repo.split('/')
         if t[-1] == 'cmd':
             return f'{t[-2]}-{name}'
-    elif '/cmd/' in src_repo:
-        t = src_repo.split('/cmd/')[-1].replace('/', '-')
+        if t[-2] == 'cmd':
+            return f'{t[-3]}-{t[-1]}-{name}'
         return f'{t}-{name}'
 
     return name
