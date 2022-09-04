@@ -96,7 +96,8 @@ class DockerV2(RegisterBaseAPIV2):
         """ get docker image last tag pushed millisecond timestamp
 
         :param name: gcmirrors/kube-apiserver
-        :return (bool, digest)
+        :return (bool, digest, timestamp)
+        if timestamp == 0; never sync
         """
         if 'docker.io' in name:
             name = name.replace('docker.io/', '')
