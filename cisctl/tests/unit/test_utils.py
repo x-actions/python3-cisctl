@@ -28,5 +28,6 @@ class UtilsTestCase(unittest.TestCase):
         print(utils.date2timestamp(date_time))
 
     def test_generate_dest_name(self):  # noqa
+        print(utils.generate_dest_name('gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory', 'channel_controller'))
         print(utils.generate_dest_name('gcr.io/knative-releases/knative.dev/eventing/cmd', 'appender'))
         print(utils.generate_dest_name('gcr.io/tekton-releases/github.com/tektoncd/triggers/cmd', 'webhook'))
