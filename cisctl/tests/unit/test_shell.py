@@ -56,6 +56,10 @@ class CISTestCase(unittest.TestCase):
         image = 'gcr.io/knative-releases/knative.dev/serving/cmd/webhook'
         print(self.cis.sync_image(image))
 
+    def test_sync_image_tektoncd_dashboard_dashboard(self):
+        image = 'gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard'
+        print(self.cis.sync_image(image))
+
     def test_sync_image_distroless_base(self):
         image = 'gcr.io/distroless/base'
         print(self.cis.sync_image(image))

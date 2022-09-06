@@ -86,7 +86,8 @@ class GoogleContainerRegisterV2(RegisterBaseAPIV2):
             for digest, v in resp.get('manifest', {}).items():
                 for tag_name in v['tag']:
                     # tag like sha256-7939f3c6366155e73cb5025fc1fde5bd70c350cc9cd6b505340f7db8af655832.sbom is un-valid
-                    if tag_name.startswith('sha256-') and tag_name.endswith('.sbom'):
+                    if tag_name.startswith('sha256-') and \
+                            (tag_name.endswith('.sbom') or tag_name.endswith('.sig') or tag_name.endswith('.att')):
                         continue
                     _tag_dict[tag_name] = v['timeUploadedMs']
 

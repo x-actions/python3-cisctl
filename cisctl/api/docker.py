@@ -96,7 +96,7 @@ class DockerV2(RegisterBaseAPIV2):
         """ get docker image last tag pushed millisecond timestamp
 
         :param name: gcmirrors/kube-apiserver
-        :return (bool, digest, timestamp)
+        :return (bool, sort_tags, digest, timestamp)
         if timestamp == 0; never sync
         """
         if 'docker.io' in name:
@@ -109,10 +109,10 @@ class DockerV2(RegisterBaseAPIV2):
 
             sort_tags = utils.sort_dict(_tag_dict)
             if len(sort_tags):
-                tag, timestamp = sort_tags[0]
-                return True, tag, timestamp
+                _last_tag, _last_timestamp = sort_tags[0]
+                return True, sort_tags, _last_tag, _last_timestamp
             else:
-                return True, None, None
+                return True, [], None, None
         else:
             if type(resp) is dict:
                 if 'message' in resp.keys() and 'object not found' in resp['message']:
@@ -124,10 +124,10 @@ class DockerV2(RegisterBaseAPIV2):
                     #     "repository": "base-debian9"
                     #   }
                     # }
-                    return True, None, 0
+                    return True, [], None, 0
 
                 # may be need check 429 Too Many Requests
-            return False, None, None
+            return False, [], None, None
 
     def sort_tags(self, name) -> (bool, []):
         raise NotImplemented
