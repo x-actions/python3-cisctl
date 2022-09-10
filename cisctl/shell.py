@@ -88,6 +88,7 @@ class CIS(object):
             return f'{"@@".join([_tag for (_tag, _) in src_sort_tags])}@@@{dest_name}'
 
         do_sync_flag = False
+        next_do_sync_flag = False
         if last_tag is None:  # never synced
             do_sync_flag = True
         synced_flag = False
@@ -113,9 +114,13 @@ class CIS(object):
                         and src_tag_digest_dict.get(src_tag) != synced_tag_digest_dict.get(src_tag):
                     do_sync_flag = True
 
-                # find last sync
-                if src_tag == 'latest' or src_tag == last_tag:
+                # update do_sync_flag to True
+                if src_tag == 'latest' or next_do_sync_flag is True:
                     do_sync_flag = True
+
+                # find last synced image tag, update next_do_sync_flag to True
+                if src_tag == last_tag:
+                    next_do_sync_flag = True
 
             # skip condition: already synced tags
             if do_sync_flag is False:
