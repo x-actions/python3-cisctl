@@ -12,19 +12,23 @@
 #   under the License.
 
 """python utils."""
-
+import time
 from datetime import datetime
 
 import collections
 try:
     from collections import abc
-    collections.Counter = abc.Counter
+    collections.Counter = abc.Counter  # noqa
 except Exception as _:  # noqa
     pass
 
 
 def now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def timestamp() -> int:
+    return int(time.time() * 1000)
 
 
 def parse_repo_and_name(image) -> (str, str):

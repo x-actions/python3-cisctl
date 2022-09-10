@@ -14,6 +14,9 @@
 """ Google Container Register v2 """
 
 import uuid
+from typing import Dict
+from typing import List
+from typing import Tuple
 
 from cisctl import http
 from cisctl import utils
@@ -74,7 +77,7 @@ class GoogleContainerRegisterV2(RegisterBaseAPIV2):
 
         return http.http_get(url, None, headers)
 
-    def sort_tags(self, name) -> (bool, []):
+    def sort_tags(self, name) -> (bool, List[Tuple[str, int]], Dict):
         """ sort image tags dict to Z-A
 
         :param name: kube-apiserver or ml-pipeline/api-server
@@ -82,17 +85,20 @@ class GoogleContainerRegisterV2(RegisterBaseAPIV2):
         """
         result, resp = self.list_tags(name)
         if result:
-            _tag_dict = {}
+            _tag_timestamp_dict = {}
+            _tag_digest_dict = {}
             for digest, v in resp.get('manifest', {}).items():
+                # digest like 'sha256:00c4c4b8cb7f747faff553ce447fbd86c7f062d04353c665c4087ef443aab8b5'
                 for tag_name in v['tag']:
                     # tag like sha256-7939f3c6366155e73cb5025fc1fde5bd70c350cc9cd6b505340f7db8af655832.sbom is un-valid
                     if tag_name.startswith('sha256-') and \
                             (tag_name.endswith('.sbom') or tag_name.endswith('.sig') or tag_name.endswith('.att')):
                         continue
-                    _tag_dict[tag_name] = v['timeUploadedMs']
+                    _tag_timestamp_dict[tag_name] = v['timeUploadedMs']
+                    _tag_digest_dict[tag_name] = digest
 
-            tag_list = utils.sort_dict(_tag_dict)
+            tag_list = utils.sort_dict(_tag_timestamp_dict)
             if len(tag_list):
-                return True, tag_list
+                return True, tag_list, _tag_digest_dict
 
-        return False, []
+        return False, [], {}

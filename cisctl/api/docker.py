@@ -12,6 +12,9 @@
 #   under the License.
 
 """ Docker Register API v2 """
+from typing import Dict
+from typing import List
+from typing import Tuple
 
 from cisctl import http
 from cisctl import utils
@@ -20,9 +23,15 @@ from cisctl.api import RegisterBaseAPIV2
 
 class DockerV2(RegisterBaseAPIV2):
 
-    def __init__(self, registry_url='https://registry.hub.docker.com'):
+    def __init__(self, registry_url='https://registry.hub.docker.com', cache_timeout=120):
+        """
+        :param registry_url: docker registry url
+        :param cache_timeout: cached docker images response, default is 120 second
+        """
         super().__init__()
         self.base_url = f'{registry_url}/v2/repositories'
+        self.caches = dict()  # {"name": {"request_timestamp": 1, "result": True/False, "response": Any}}
+        self.cache_timeout = cache_timeout
 
     def delete_image(self, name, digest) -> bool:
         """ delete image by tag
@@ -86,33 +95,55 @@ class DockerV2(RegisterBaseAPIV2):
             ]
         }
         """
+        # check cache
+        if 'docker.io' in name:
+            name = name.replace('docker.io/', '')
+        c = self.caches.get(name)
+        if c is not None:
+            if c['request_timestamp'] + self.cache_timeout > utils.timestamp():
+                return c['result'], c['response']
+            else:
+                self.caches.pop(name)
+
+        # new request
         url = f'{self.base_url}/{name}/tags?n={n}'
         if next:
             url += f'&url={url}'
 
-        return http.http_get(url)
+        result, response = http.http_get(url)
+        self.caches[name] = {
+            "request_timestamp": utils.timestamp(),
+            "result": result,
+            "response": response,
+        }
+        return result, response
 
-    def last_tag(self, name) -> (bool, str, int):
+    def last_tag(self, name, sort_tags: List[Tuple[str, int]] = None) -> (str, int):
         """ get docker image last tag pushed millisecond timestamp
 
         :param name: gcmirrors/kube-apiserver
-        :return (bool, sort_tags, digest, timestamp)
-        if timestamp == 0; never sync
+        :param sort_tags: ref self.sort_tags()
+        :return (bool, _last_tag, _last_timestamp)
         """
-        if 'docker.io' in name:
-            name = name.replace('docker.io/', '')
+        if sort_tags is None:
+            _, sort_tags, _ = self.sort_tags(name)
+        if len(sort_tags):
+            _last_tag, _last_timestamp = sort_tags[0]
+            return _last_tag, _last_timestamp
+        else:
+            return None, None
+
+    def sort_tags(self, name) -> (bool, List[Tuple[str, int]], Dict):
         result, resp = self.list_tags(name)
         if result:
-            _tag_dict = {}
+            _tag_timestamp_dict = dict()
+            _tag_digest_dict = dict()
             for item in resp.get('results', []):
-                _tag_dict[item['name']] = utils.date2timestamp(item['tag_last_pushed'])
+                _tag_timestamp_dict[item['name']] = utils.date2timestamp(item['tag_last_pushed'])
+                _tag_digest_dict[item['name']] = item['digest']
 
-            sort_tags = utils.sort_dict(_tag_dict)
-            if len(sort_tags):
-                _last_tag, _last_timestamp = sort_tags[0]
-                return True, sort_tags, _last_tag, _last_timestamp
-            else:
-                return True, [], None, None
+            sort_tags = utils.sort_dict(_tag_timestamp_dict)
+            return True, sort_tags, _tag_digest_dict
         else:
             if type(resp) is dict:
                 if 'message' in resp.keys() and 'object not found' in resp['message']:
@@ -124,10 +155,7 @@ class DockerV2(RegisterBaseAPIV2):
                     #     "repository": "base-debian9"
                     #   }
                     # }
-                    return True, [], None, 0
+                    return True, [], {}
 
                 # may be need check 429 Too Many Requests
-            return False, [], None, None
-
-    def sort_tags(self, name) -> (bool, []):
-        raise NotImplemented
+            return False, [], {}

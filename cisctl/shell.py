@@ -73,11 +73,14 @@ class CIS(object):
         else:
             self.init_source_registry_api(src_repo)
 
-        _, src_sort_tags = self._source_registry.sort_tags(name)
+        _, src_sort_tags, src_tag_digest_dict = self._source_registry.sort_tags(name)
         src_sort_tags.reverse()
 
-        result, synced_tags_with_timestamp, last_tag, last_timestamp = \
-            self._docker.last_tag(f'{constants.DEST_REPO}/{dest_name}')
+        target_image_name = f'{constants.DEST_REPO}/{dest_name}'
+        result, synced_tags_with_timestamp, synced_tag_digest_dict = \
+            self._docker.sort_tags(target_image_name)
+        last_tag, last_timestamp = self._docker.last_tag(target_image_name, synced_tags_with_timestamp)
+
         # call docker api occur exception, skip sync
         if result is False and last_tag is None and last_timestamp is None:
             logger.warning(f'sync image {image}, docker api limit, exist.')
@@ -102,6 +105,12 @@ class CIS(object):
 
                 # if src_uploaded_timestamp > last_timestamp: src is update, do sync
                 if last_timestamp is not None and int(src_uploaded_timestamp) > int(last_timestamp):
+                    do_sync_flag = True
+
+                # already synced but image digest is not match, do sync again
+                if synced_flag is True and src_tag_digest_dict.get(src_tag) is not None \
+                        and synced_tag_digest_dict.get(src_tag) is not None \
+                        and src_tag_digest_dict.get(src_tag) != synced_tag_digest_dict.get(src_tag):
                     do_sync_flag = True
 
                 # find last sync
