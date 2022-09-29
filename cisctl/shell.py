@@ -94,6 +94,9 @@ class CIS(object):
         synced_flag = False
         synced_tags = {k for k, v in synced_tags_with_timestamp}
         for (src_tag, src_uploaded_timestamp) in src_sort_tags:
+            src_tag_digest = src_tag_digest_dict.get(src_tag)
+            synced_tag_digest = synced_tag_digest_dict.get(src_tag)
+
             if do_sync_flag is False:
                 # check already synced flag
                 if synced_flag is False and src_tag != 'latest' and src_tag in synced_tags:
@@ -109,9 +112,9 @@ class CIS(object):
                     do_sync_flag = True
 
                 # already synced but image digest is not match, do sync again
-                if synced_flag is True and src_tag_digest_dict.get(src_tag) is not None \
-                        and synced_tag_digest_dict.get(src_tag) is not None \
-                        and src_tag_digest_dict.get(src_tag) != synced_tag_digest_dict.get(src_tag):
+                if synced_flag is True and src_tag_digest is not None \
+                        and synced_tag_digest is not None \
+                        and src_tag_digest != synced_tag_digest:
                     do_sync_flag = True
 
                 # update do_sync_flag to True
@@ -124,6 +127,10 @@ class CIS(object):
 
             # skip condition: already synced tags
             if do_sync_flag is False:
+                continue
+            if do_sync_flag is True and src_tag_digest is not None \
+                    and synced_tag_digest is not None \
+                    and src_tag_digest != synced_tag_digest:
                 continue
 
             self._skopeo.copy(
