@@ -81,12 +81,15 @@ def sort_dict(d):
 def date2timestamp(date_time) -> int:
     """ convert date to millisecond timestamp
 
-    :param date_time: 2020-06-28T11:46:53.539425Z
+    :param date_time: 2020-06-28T11:46:53.539425Z / 2022-10-27T10:54:56Z
     :return timestamp: 1593316013539
     """
-    TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
-    dt_utc = datetime.strptime(date_time, TIME_FORMAT)
-    return int(dt_utc.timestamp() * 1000)
+    try:
+        dt_utc = datetime.strptime(date_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+        return int(dt_utc.timestamp() * 1000)
+    except ValueError:
+        dt_utc = datetime.strptime(date_time, '%Y-%m-%dT%H:%M:%SZ')
+        return int(dt_utc.timestamp() * 1000)
 
 
 def generate_dest_name(src_repo, name):

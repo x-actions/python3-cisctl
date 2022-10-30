@@ -130,7 +130,7 @@ class CIS(object):
                 continue
             if do_sync_flag is True and src_tag_digest is not None \
                     and synced_tag_digest is not None \
-                    and src_tag_digest != synced_tag_digest:
+                    and src_tag_digest == synced_tag_digest:
                 continue
 
             self._skopeo.copy(
