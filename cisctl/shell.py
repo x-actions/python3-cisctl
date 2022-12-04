@@ -73,25 +73,65 @@ class CIS(object):
         else:
             self.init_source_registry_api(src_repo)
 
-        _, src_sort_tags = self._source_registry.sort_tags(name)
+        _, src_sort_tags, src_tag_digest_dict = self._source_registry.sort_tags(name)
         src_sort_tags.reverse()
 
-        result, last_tag, last_timestamp = self._docker.last_tag(f'{constants.DEST_REPO}/{dest_name}')
+        target_image_name = f'{constants.DEST_REPO}/{dest_name}'
+        result, synced_tags_with_timestamp, synced_tag_digest_dict = \
+            self._docker.sort_tags(target_image_name)
+        last_tag, last_timestamp = self._docker.last_tag(target_image_name, synced_tags_with_timestamp)
+
+        # call docker api occur exception, skip sync
         if result is False and last_tag is None and last_timestamp is None:
             logger.warning(f'sync image {image}, docker api limit, exist.')
             # the result is need to sync
             return f'{"@@".join([_tag for (_tag, _) in src_sort_tags])}@@@{dest_name}'
 
-        flag = False
+        do_sync_flag = False
+        next_do_sync_flag = False
+        if last_tag is None:  # never synced
+            do_sync_flag = True
+        synced_flag = False
+        synced_tags = {k for k, v in synced_tags_with_timestamp}
         for (src_tag, src_uploaded_timestamp) in src_sort_tags:
-            if flag is False:
-                if last_tag is None or src_tag == last_tag:
-                    flag = True
+            src_tag_digest = src_tag_digest_dict.get(src_tag)
+            synced_tag_digest = synced_tag_digest_dict.get(src_tag)
 
-            # skip condition:
-            #   1. already sync
-            #   2. if src_uploaded_timestamp < last_timestamp: skip, else src is update, do sync
-            if flag is False or (last_timestamp is not None and int(src_uploaded_timestamp) < int(last_timestamp)):
+            if do_sync_flag is False:
+                # check already synced flag
+                if synced_flag is False and src_tag != 'latest' and src_tag in synced_tags:
+                    synced_flag = True
+
+                # if oldest tag is sync and new tag not in synced_tags, do sync
+                # fix some tag not sync bug
+                if synced_flag is True and src_tag not in synced_tags:
+                    do_sync_flag = True
+
+                # if src_uploaded_timestamp > last_timestamp: src is update, do sync
+                if last_timestamp is not None and int(src_uploaded_timestamp) > int(last_timestamp):
+                    do_sync_flag = True
+
+                # already synced but image digest is not match, do sync again
+                # TODO: xiexianbin, not fix https://www.xiexianbin.cn/container/tools/skopeo/#fq
+                # if synced_flag is True and src_tag_digest is not None \
+                #         and synced_tag_digest is not None \
+                #         and src_tag_digest != synced_tag_digest:
+                #     do_sync_flag = True
+
+                # update do_sync_flag to True
+                if src_tag == 'latest' or next_do_sync_flag is True:
+                    do_sync_flag = True
+
+                # find last synced image tag, update next_do_sync_flag to True
+                if src_tag == last_tag:
+                    next_do_sync_flag = True
+
+            # skip condition: already synced tags
+            if do_sync_flag is False:
+                continue
+            if do_sync_flag is True and src_tag_digest is not None \
+                    and synced_tag_digest is not None \
+                    and src_tag_digest == synced_tag_digest:
                 continue
 
             self._skopeo.copy(

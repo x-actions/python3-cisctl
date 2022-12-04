@@ -25,10 +25,10 @@ RUN apt update && \
     cd ~ && \
     git clone https://github.com/x-actions/python3-cisctl.git && \
     cd python3-cisctl && \
+    git checkout v1 && \
     pip3 install -r requirements.txt && \
     python3 setup.py --version && \
     python3 setup.py install
-# line:35 # git checkout v1 && \
 
 ADD entrypoint.sh /
 RUN chmod +x /entrypoint.sh
