@@ -142,6 +142,8 @@ class DockerV2(RegisterBaseAPIV2):
                 _tag_timestamp_dict[item['name']] = utils.date2timestamp(item['tag_last_pushed'])
                 if item.get('digest') is not None:
                     _tag_digest_dict[item['name']] = item.get('digest')
+                elif len(item.get('images', [])) > 0 and item.get('images')[0].get('digest') is not None:
+                    _tag_digest_dict[item['name']] = item.get('images')[0].get('digest')
 
             sort_tags = utils.sort_dict(_tag_timestamp_dict)
             return True, sort_tags, _tag_digest_dict

@@ -112,10 +112,11 @@ class CIS(object):
                     do_sync_flag = True
 
                 # already synced but image digest is not match, do sync again
-                if synced_flag is True and src_tag_digest is not None \
-                        and synced_tag_digest is not None \
-                        and src_tag_digest != synced_tag_digest:
-                    do_sync_flag = True
+                # TODO: xiexianbin, not fix https://www.xiexianbin.cn/container/tools/skopeo/#fq
+                # if synced_flag is True and src_tag_digest is not None \
+                #         and synced_tag_digest is not None \
+                #         and src_tag_digest != synced_tag_digest:
+                #     do_sync_flag = True
 
                 # update do_sync_flag to True
                 if src_tag == 'latest' or next_do_sync_flag is True:
