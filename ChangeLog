@@ -1,8 +1,18 @@
 CHANGES
 =======
 
-v0.1.0
+v1.1.0
 ------
 
+* release v1.1.0
+* V1 (#13)
+* release v1.0.0 (#10)
+* fix knative cmd two slash bug (#8)
+* fix mistake for docker api limit (#6)
+* fix sync bug (#1)
+* support gcr image with /cmd/
+* support gcr image like knative
+* split job for docker api limit
+* add more source repo support
 * feautre: add docker register v2 api and gcr api
 * init commit
