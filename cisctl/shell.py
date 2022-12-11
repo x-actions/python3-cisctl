@@ -97,7 +97,7 @@ class CIS(object):
             src_tag_digest = src_tag_digest_dict.get(src_tag)
             synced_tag_digest = synced_tag_digest_dict.get(src_tag)
 
-            if constants.SKIP_UUID_TAG is True:
+            if constants.SKIP_LONG_TAG is True:
                 # like:
                 # f1bad2e6-7918-11ed-8c6c-fa163e399192
                 # cf9a334cb027e6bc6a35c94a3b120b34880750a9
