@@ -20,6 +20,9 @@ CURRENT_PATH = os.getcwd()
 GIT_TOKEN = os.environ.get('GIT_TOKEN', 'github_token')
 GIT_ORG = os.environ.get('GIT_ORG', 'x-mirrors')
 GIT_REPO = os.environ.get('GIT_REPO', 'gcmirrors')
+SKIP_UUID_TAG = False
+if os.environ.get('SKIP_UUID_TAG', False) in (True, "true", 1):
+    SKIP_UUID_TAG = True
 
 # skopeo args
 """
