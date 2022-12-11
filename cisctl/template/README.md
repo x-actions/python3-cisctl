@@ -1,7 +1,7 @@
 Google Containers Registry {{ src_repo }} Mirrors [last sync {{ date }}]
 -------
 
-[![{{ src_repo }}](https://github.com/x-mirrors/gcr.io/actions/workflows/{{ src_repo }}.yml/badge.svg?branch=main)](https://github.com/x-mirrors/gcr.io/actions/workflows/{{ src_repo }}.yml)
+[![{{ src_repo }}](https://github.com/x-mirrors/gcr.io/actions/workflows/{{ src_org }}-{{ src_repo }}.yml/badge.svg?branch=main)](https://github.com/x-mirrors/gcr.io/actions/workflows/{{ src_org }}-{{ src_repo }}.yml)
 
 Repository Address: [https://hub.docker.com/u/{{ dest_repo }}/](https://hub.docker.com/u/{{ dest_repo }}/)
 
