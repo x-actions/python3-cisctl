@@ -97,6 +97,14 @@ class CIS(object):
             src_tag_digest = src_tag_digest_dict.get(src_tag)
             synced_tag_digest = synced_tag_digest_dict.get(src_tag)
 
+            if constants.SKIP_LONG_TAG is True:
+                # like:
+                # f1bad2e6-7918-11ed-8c6c-fa163e399192
+                # cf9a334cb027e6bc6a35c94a3b120b34880750a9
+                # cf9a334cb027e6bc6a35c94a3b120b34880750a9-slim
+                if len(src_tag) >= 36:
+                    continue
+
             if do_sync_flag is False:
                 # check already synced flag
                 if synced_flag is False and src_tag != 'latest' and src_tag in synced_tags:
