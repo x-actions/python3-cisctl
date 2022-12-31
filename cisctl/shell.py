@@ -52,6 +52,8 @@ class CIS(object):
                 self._source_registry = GoogleContainerRegisterV2(registry_url='https://gcr.io', project=repo)
             elif registry_url.startswith('k8s.gcr.io'):
                 self._source_registry = GoogleContainerRegisterV2(registry_url='https://k8s.gcr.io', project=repo)
+            elif registry_url.startswith('us.gcr.io'):
+                self._source_registry = GoogleContainerRegisterV2(registry_url='https://us.gcr.io', project=repo)
             elif registry_url.startswith('quay.io'):
                 self._source_registry = QuayRegisterV2(registry_url='https://quay.io', repo=repo)
 
