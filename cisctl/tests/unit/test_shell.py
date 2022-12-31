@@ -63,3 +63,7 @@ class CISTestCase(unittest.TestCase):
     def test_sync_image_distroless_base(self):
         image = 'gcr.io/distroless/base'
         print(self.cis.sync_image(image))
+
+    def test_sync_image_gke_mpi_metadata_server(self):
+        image = 'us.gcr.io/k8s-artifacts-prod/gke-mpi-metadata-server'
+        print(self.cis.sync_image(image))
