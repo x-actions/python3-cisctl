@@ -52,7 +52,6 @@ class K8sRegister(RegisterBaseAPIV2):
             }
         """
         cmd = f'gcrane ls --json {self.base_url}/{name}'
-        cmd = f'export http_proxy="http://127.0.0.1:8001"; export HTTP_PROXY="http://127.0.0.1:8001"; export https_proxy="http://127.0.0.1:8001"; export HTTPS_PROXY="http://127.0.0.1:8001"; gcrane ls --json {self.base_url}/{name}'
         code, stdout, _ = self.bash.run(cmd, result=True)
         if code == 0:
             return True, json.loads(stdout)
