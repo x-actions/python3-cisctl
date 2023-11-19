@@ -28,6 +28,7 @@ RUN apt update && \
     mv gcrane /usr/local/bin/ && \
     git clone https://github.com/x-actions/python3-cisctl.git && \
     cd python3-cisctl && \
+    pip3 install -r requirements.txt && \
     python3 setup.py install
 
 ADD entrypoint.sh /
