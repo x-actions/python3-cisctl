@@ -65,6 +65,13 @@ class K8sRegister(RegisterBaseAPIV2):
         """
         result, resp = self.list_tags(name)
         if result:
+            # error case:
+            #   Run bash: gcrane ls --json registry.k8s.io/etcd-backup
+            #   ret is 0
+            #   stdout is {"child":null,"manifest":null,"name":"","tags":null}
+            if resp.get('manifest') is None:
+              return False, [], {}
+
             _tag_timestamp_dict = {}
             _tag_digest_dict = {}
             for digest, v in resp.get('manifest', {}).items():
