@@ -39,11 +39,13 @@ def parse_repo_and_name(image) -> (str, str):
         - gcr.io/ml-pipeline/api-server
         - quay.io/metallb/controller
         - gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
+        - registry.k8s.io/addon-builder
     :return (repo, name): one of
         - ('k8s.gcr.io', 'pause-amd64')
         - ('gcr.io/ml-pipeline', 'api-server')
         - ('quay.io/metallb', 'controller')
         - ('gcr.io/knative-releases/knative.dev/eventing/cmd', 'webhook')
+        - ('registry.k8s.io', 'addon-builder')
     """
     t = image.split('/')
     return '/'.join(t[:-1]), t[-1]
@@ -101,6 +103,7 @@ def generate_dest_name(src_repo, name):
         - quay.io/metallb
         - gcr.io/knative-releases/knative.dev/eventing/cmd
         - gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory # channel_controller -> eventing-in_memory-channel_controller
+        - registry.k8s.io/addon-builder
     :param name: image name
     :return dest_image_name
     """

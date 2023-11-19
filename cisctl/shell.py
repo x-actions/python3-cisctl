@@ -22,6 +22,7 @@ from cisctl import constants, http
 from cisctl import utils
 from cisctl.api.docker import DockerV2
 from cisctl.api.gcr import GoogleContainerRegisterV2
+from cisctl.api.k8s import K8sRegister
 from cisctl.api.quay import QuayRegisterV2
 from cisctl.logger import logger
 from cisctl.render import Render
@@ -54,6 +55,8 @@ class CIS(object):
                 self._source_registry = GoogleContainerRegisterV2(registry_url='https://k8s.gcr.io', project=repo)
             elif registry_url.startswith('quay.io'):
                 self._source_registry = QuayRegisterV2(registry_url='https://quay.io', repo=repo)
+            elif registry_url.startswith('registry.k8s.io'):
+                self._source_registry = K8sRegister(registry_url='https://registry.k8s.io', repo=repo)
 
     def sync_image(self, image):
         """ sync image
@@ -63,6 +66,7 @@ class CIS(object):
           - gcr.io/ml-pipeline/api-server
           - quay.io/metallb/controller
           - gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
+          - registry.k8s.io/addon-builder
         """
         logger.debug(f'Begin to sync image: [{image}], sub pid is [{os.getpid()}]')
         src_repo, name = utils.parse_repo_and_name(image)
