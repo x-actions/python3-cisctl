@@ -21,7 +21,7 @@ ENV LANGUAGE en_US.UTF-8
 
 # apt install -y docker-ce docker-ce-cli containerd.io systemctl start docker
 RUN apt update && \
-    apt install -y git python3 python3-pip skopeo jq && \
+    apt install -y git python3 python3-pip skopeo jq wget && \
     wget https://github.com/google/go-containerregistry/releases/download/v0.16.1/go-containerregistry_Linux_x86_64.tar.gz && \
     tar -zxvf go-containerregistry_Linux_x86_64.tar.gz && \
     rm go-containerregistry_Linux_x86_64.tar.gz && \
