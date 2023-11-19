@@ -59,11 +59,13 @@ def parse_registry_url_and_project(src_repo) -> (str, str):
         - gcr.io/ml-pipeline
         - quay.io/metallb
         - gcr.io/knative-releases/knative.dev/eventing/cmd
+        - registry.k8s.io/addon-builder
     :return (repo, name): one of
         - ('k8s.gcr.io', None)
         - ('gcr.io', 'ml-pipeline')
         - ('quay.io', 'metallb')
         - ('gcr.io', 'knative-releases/knative.dev/eventing/cmd')
+        - ('registry.k8s.io', 'addon-builder')
     """
     t = src_repo.split('/')
     if len(t) == 1:

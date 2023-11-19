@@ -25,7 +25,7 @@ from cisctl.api import RegisterBaseAPIV2
 
 class K8sRegister(RegisterBaseAPIV2):
 
-    def __init__(self, registry_url='https://registry.k8s.io', project=None):
+    def __init__(self, registry_url: str='https://registry.k8s.io', project: str=None):
         super().__init__()
         self.base_url = registry_url.replace('https://', '').replace('/', '')
         self.bash = Bash()

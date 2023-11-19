@@ -56,7 +56,7 @@ class CIS(object):
             elif registry_url.startswith('quay.io'):
                 self._source_registry = QuayRegisterV2(registry_url='https://quay.io', repo=repo)
             elif registry_url.startswith('registry.k8s.io'):
-                self._source_registry = K8sRegister(registry_url='https://registry.k8s.io', repo=repo)
+                self._source_registry = K8sRegister(registry_url='https://registry.k8s.io', project=repo)
 
     def sync_image(self, image):
         """ sync image

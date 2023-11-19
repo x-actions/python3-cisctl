@@ -26,7 +26,7 @@ RUN apt update && \
     tar -zxvf go-containerregistry_Linux_x86_64.tar.gz && \
     rm go-containerregistry_Linux_x86_64.tar.gz && \
     mv gcrane /usr/local/bin/ && \
-    git clone https://github.com/x-actions/python3-cisctl.git && \
+    git clone https://github.com/x-actions/python3-cisctl.git -b feature/registry.k8s.io && \
     cd python3-cisctl && \
     pip3 install -r requirements.txt && \
     python3 setup.py install
