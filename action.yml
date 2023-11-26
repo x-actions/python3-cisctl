@@ -26,6 +26,12 @@ inputs:
   THREAD_POOL_NUM:
     description: 'sync thread pool num'
     default: 2
+  JOB_BATCH_COUNT:
+    description: 'job batch count'
+    default: 3
+  AFTER_TIMEUPLOADEDMS:
+    description: 'which image after timeUploadedMs'
+    default: 0
   LOG_LEVEL:
     description: 'logger level, value [DEBUG|INFO|WARN|ERROR|FATAL]'
     default: 'DEBUG'
