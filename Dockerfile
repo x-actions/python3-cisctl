@@ -27,7 +27,7 @@ RUN apt update && \
     ln -s /usr/lib/go-1.20/bin/go /usr/bin/go && \
     export GOPATH=/gopath && \
     mkdir -p $GOPATH/src/github.com/containers && \
-    wget https://github.com/containers/skopeo/archive/refs/tags/v1.13.3.tar.gz && \
+    wget -O skopeo-1.13.3.tar.gz https://github.com/containers/skopeo/archive/refs/tags/v1.13.3.tar.gz && \
     tar -zxvf skopeo-1.13.3.tar.gz -C $GOPATH/src/github.com/containers/ && \
     cd $GOPATH/src/github.com/containers && \
     mv skopeo-1.13.3 skopeo && \
