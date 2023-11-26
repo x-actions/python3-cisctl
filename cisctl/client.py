@@ -14,13 +14,9 @@
 """python http utils."""
 
 import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-import urllib3
 
 from cisctl.logger import logger
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 timeout = 200
 
 
@@ -53,15 +49,17 @@ def _http_request(method, url, headers=None, data=None):
     else:
         if resp.status_code != 200:
             content = resp.content[:100] if resp.content else ''
-            logger.error(f'http request error! type: {method}, url: {url}, data: {str(data)}, '
-                         f'response_status_code: {resp.status_code}, response_content: {content}')
+            logger.error(
+                f'http request error! type: {method}, url: {url}, data: {str(data)}, '
+                f'response_status_code: {resp.status_code}, response_content: {content}')
             if headers.get('Content-Type', None) == 'application/json':
                 return False, resp.json()
             else:
                 return False, resp.text
 
-        logger.debug(f'http request success! type: {method}, url: {url}, data: {str(data)}, '
-                     f'response_status_code: {resp.status_code}, response_content: {resp.text}')
+        logger.debug(
+            f'http request success! type: {method}, url: {url}, data: {str(data)}, '
+            f'response_status_code: {resp.status_code}, response_content: {resp.text}')
 
         if headers.get('Content-Type', None) == 'application/json':
             return True, resp.json()

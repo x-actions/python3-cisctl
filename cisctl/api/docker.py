@@ -16,7 +16,7 @@ from typing import Dict
 from typing import List
 from typing import Tuple
 
-from cisctl import http
+from cisctl import client
 from cisctl import utils
 from cisctl.api import RegisterBaseAPIV2
 
@@ -43,7 +43,7 @@ class DockerV2(RegisterBaseAPIV2):
         return:
         """
         url = f'{self.base_url}/{name}/manifests/{digest}'
-        return http.http_delete(url)
+        return client.http_delete(url)
 
     def list_tags(self, name, n=10, next='') -> {}:  # noqa
         """ list special image tags
@@ -110,7 +110,7 @@ class DockerV2(RegisterBaseAPIV2):
         if next:
             url += f'&url={url}'
 
-        result, response = http.http_get(url)
+        result, response = client.http_get(url)
         self.caches[name] = {
             "request_timestamp": utils.timestamp(),
             "result": result,

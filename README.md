@@ -58,7 +58,12 @@ export DEST_TRANSPORT_USER="xianbinxie"
 export DEST_TRANSPORT_PASSWORD="<passwords>"
 
 # run sync
-cisctl
+cisctl sync
+
+# dev
+export PYTHONPATH=$(pwd)
+python3 cisctl/shell.py --help
+python3 cisctl/shell.py help sync
 ```
 
 - tests

@@ -1,4 +1,4 @@
-# Copyright 2022 xiexianbin.cn
+# Copyright 2024 xiexianbin.cn
 # All Rights Reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -10,23 +10,3 @@
 #   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #   License for the specific language governing permissions and limitations
 #   under the License.
-
-"""test utils."""
-
-import unittest
-
-from cisctl import config
-from cisctl import client
-
-
-class HTTPTestCase(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
-    def test_http_get(self):
-        headers = {
-            'Content-Type': 'application/text'
-        }
-        result, resp = client.http_get(url=config.SRC_IMAGE_LIST_URL, headers=headers)
-        print(resp.split('\n'))

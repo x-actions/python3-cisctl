@@ -12,7 +12,7 @@ export SRC_TRANSPORT=${SRC_TRANSPORT}
 export DEST_TRANSPORT=${DEST_TRANSPORT}
 export THREAD_POOL_NUM=${THREAD_POOL_NUM:-2}
 export JOB_BATCH_COUNT=${JOB_BATCH_COUNT:-3}
-export AFTER_TIMEUPLOADEDMS=${AFTER_TIMEUPLOADEDMS:0}
+export AFTER_TIMEUPLOADEDMS=${AFTER_TIMEUPLOADEDMS:-0}
 export LOG_LEVEL=${LOG_LEVEL:-"DEBUG"}
 
 echo "## Check Package Version ##################"
@@ -24,4 +24,4 @@ echo "## Login dest TRANSPORT ##################"
 set -x
 skopeo login -u ${DEST_TRANSPORT_USER} -p ${DEST_TRANSPORT_PASSWORD} ${DEST_REPO/\/*/}
 
-cisctl
+cisctl sync

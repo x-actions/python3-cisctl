@@ -17,7 +17,7 @@ import os
 
 from jinja2 import Template
 
-from cisctl import constants
+from cisctl import config
 from cisctl import utils
 
 
@@ -29,7 +29,7 @@ class Render(object):
     def readme(self, images_list, src_org, src_repo):
         # for readme.md
         in_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'template/README.md')
-        out_path = os.path.join(constants.GIT_REPO, 'README.md')
+        out_path = os.path.join(config.GIT_REPO, 'README.md')
         with open(in_path, 'r') as in_file, open(out_path, 'w') as out_file:
             tmpl = Template(in_file.read())
             out_file.write(tmpl.render({
@@ -38,5 +38,5 @@ class Render(object):
                 'date': utils.now(),
                 'src_org': src_org,
                 'src_repo': src_repo,
-                'dest_repo': constants.DEST_REPO.split('/')[-1]
+                'dest_repo': config.DEST_REPO.split('/')[-1]
             }))
