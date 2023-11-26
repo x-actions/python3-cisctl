@@ -21,11 +21,25 @@ ENV LANGUAGE en_US.UTF-8
 
 # apt install -y docker-ce docker-ce-cli containerd.io systemctl start docker
 RUN apt update && \
-    apt install -y git python3 python3-pip skopeo jq wget && \
+    apt install -y git python3 python3-pip jq wget && \
+    # install skopeo
+    apt install libgpgme-dev libassuan-dev libbtrfs-dev libdevmapper-dev pkg-config golang-1.20 -y && \
+    ln -s /usr/lib/go-1.20/bin/go /usr/bin/go && \
+    export GOPATH=/gopath && \
+    mkdir -p $GOPATH/src/github.com/containers && \
+    wget https://github.com/containers/skopeo/archive/refs/tags/v1.13.3.tar.gz && \
+    tar -zxvf skopeo-1.13.3.tar.gz -C $GOPATH/src/github.com/containers/ && \
+    cd $GOPATH/src/github.com/containers && \
+    mv skopeo-1.13.3 skopeo && \
+    cd skopeo && \
+    DISABLE_DOCS=1 make bin/skopeo && \
+    mv bin/skopeo /usr/local/bin/ && \
+    # install gcrane
     wget https://github.com/google/go-containerregistry/releases/download/v0.16.1/go-containerregistry_Linux_x86_64.tar.gz && \
     tar -zxvf go-containerregistry_Linux_x86_64.tar.gz && \
     rm go-containerregistry_Linux_x86_64.tar.gz && \
     mv gcrane /usr/local/bin/ && \
+    # install python3-cisctl
     git clone https://github.com/x-actions/python3-cisctl.git -b feature/registry.k8s.io && \
     cd python3-cisctl && \
     pip3 install -r requirements.txt && \
