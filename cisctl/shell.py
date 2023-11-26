@@ -101,7 +101,7 @@ class CIS(object):
             src_tag_digest = src_tag_digest_dict.get(src_tag)
             synced_tag_digest = synced_tag_digest_dict.get(src_tag)
 
-            if do_sync_flag is False and src_uploaded_timestamp > constants.AFTER_TIMEUPLOADEDMS:
+            if do_sync_flag is False and int(src_uploaded_timestamp) > constants.AFTER_TIMEUPLOADEDMS:
                 # check already synced flag
                 if synced_flag is False and src_tag != 'latest' and src_tag in synced_tags:
                     synced_flag = True
