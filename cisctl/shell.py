@@ -179,8 +179,8 @@ class CIS(object):
             target_images_list = target_images_list[start_index:end_index+1]
             logger.info(
                 f'BATCH Jobs matched, start_index is {start_index}, end_index is {end_index}, '
-                f'JOB_BATCH_COUNT is {constants.JOB_BATCH_COUNT}, batch_num is {batch_num},
-                images_count_per_job is {images_count_per_job}, begin to sync image size '
+                f'JOB_BATCH_COUNT is {constants.JOB_BATCH_COUNT}, batch_num is {batch_num}, '
+                f'images_count_per_job is {images_count_per_job}, begin to sync image size '
                 f'is {len(target_images_list)}')
 
         for image in target_images_list:
