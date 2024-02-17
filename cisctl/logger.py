@@ -16,20 +16,21 @@
 import logging
 import sys
 
-from cisctl import constants
+import cisctl
+from cisctl import config
 
 
 def gen_logger():
     # create logger
-    if constants.LOG_LEVEL == 'DEBUG':
+    if config.LOG_LEVEL == 'DEBUG':
         log_level = logging.DEBUG
-    elif constants.LOG_LEVEL == 'INFO':
+    elif config.LOG_LEVEL == 'INFO':
         log_level = logging.INFO
-    elif constants.LOG_LEVEL == 'WARN':
+    elif config.LOG_LEVEL == 'WARN':
         log_level = logging.WARN
-    elif constants.LOG_LEVEL == 'ERROR':
+    elif config.LOG_LEVEL == 'ERROR':
         log_level = logging.ERROR
-    elif constants.LOG_LEVEL == 'FATAL':
+    elif config.LOG_LEVEL == 'FATAL':
         log_level = logging.FATAL
     else:
         log_level = logging.DEBUG
@@ -37,7 +38,7 @@ def gen_logger():
         fmt="%(asctime)-15s %(process)d %(levelname)s %(message)s - %(filename)s %(lineno)d",
         datefmt="%a %d %b %Y %H:%M:%S")
 
-    _logger = logging.getLogger(name="cis")
+    _logger = logging.getLogger(name=cisctl.__name__)
     _logger.setLevel(log_level)
 
     fh = logging.FileHandler(filename="cis.log")

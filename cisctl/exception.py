@@ -41,3 +41,7 @@ class CISException(Exception):
 
         self.message = message
         super(CISException, self).__init__(message)
+
+
+class CommandError(Exception):
+    pass

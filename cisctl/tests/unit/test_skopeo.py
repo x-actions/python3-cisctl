@@ -31,3 +31,12 @@ class SkopeoTestCase(unittest.TestCase):
         dest_transport = 'docker'
 
         self.skopeo.do_sync(src_repo, dest_repo, name, src_transport, dest_transport)
+
+    def test_sync_registry_k8s_io(self):
+        src_repo = 'registry.k8s.io'
+        dest_repo = 'docker.io/registryk8s'
+        name = 'addon-builder'
+        src_transport = 'registry.k8s.io'
+        dest_transport = 'docker'
+
+        self.skopeo.do_sync(src_repo, dest_repo, name, src_transport, dest_transport)

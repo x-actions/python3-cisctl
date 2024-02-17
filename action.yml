@@ -13,7 +13,7 @@ inputs:
     default: 'gcmirrors'
   SRC_IMAGE_LIST_URL:
     description: 'SRC_IMAGE_LIST_URL'
-    default: 'https://raw.githubusercontent.com/x-mirrors/gcr.io/main/k8s.txt'
+    default: 'https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt'
   DEST_REPO:
     description: 'DEST register REPO'
     default: 'docker.io/gcmirrors'
@@ -26,6 +26,12 @@ inputs:
   THREAD_POOL_NUM:
     description: 'sync thread pool num'
     default: 2
+  JOB_BATCH_COUNT:
+    description: 'job batch count'
+    default: 3
+  AFTER_TIMEUPLOADEDMS:
+    description: 'which image after timeUploadedMs'
+    default: 0
   LOG_LEVEL:
     description: 'logger level, value [DEBUG|INFO|WARN|ERROR|FATAL]'
     default: 'DEBUG'

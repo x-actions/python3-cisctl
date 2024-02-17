@@ -1,4 +1,4 @@
-# Copyright 2022 xiexianbin.cn
+# Copyright 2023 xiexianbin.cn
 # All Rights Reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -11,24 +11,22 @@
 #   License for the specific language governing permissions and limitations
 #   under the License.
 
-"""test utils."""
+"""test python K8sRegister."""
 
 import unittest
 
-from cisctl import config
-from cisctl import client
+from cisctl.api.k8s import K8sRegister
 
 
-class HTTPTestCase(unittest.TestCase):
+class K8sRegisterTestCase(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.k8s = K8sRegister()
 
-    def test_http_get(self):
-        headers = {
-            'Content-Type': 'application/text'
-        }
-        result, resp = client.http_get(
-            url='https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt',
-            headers=headers)
-        print(resp.split('\n'))
+    def test_list_tags(self):
+        name = 'addon-builder'
+        print(self.k8s.list_tags(name))
+
+    def test_sort_tags(self):
+        name = 'addon-builder'
+        print(self.k8s.sort_tags(name))

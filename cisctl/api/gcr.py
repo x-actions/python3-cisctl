@@ -18,7 +18,7 @@ from typing import Dict
 from typing import List
 from typing import Tuple
 
-from cisctl import http
+from cisctl import client
 from cisctl import utils
 from cisctl.api import RegisterBaseAPIV2
 
@@ -75,7 +75,7 @@ class GoogleContainerRegisterV2(RegisterBaseAPIV2):
             'user-agent': user_agent
         }
 
-        return http.http_get(url, None, headers)
+        return client.http_get(url, None, headers)
 
     def sort_tags(self, name) -> (bool, List[Tuple[str, int]], Dict):
         """ sort image tags dict to Z-A

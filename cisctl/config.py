@@ -1,4 +1,4 @@
-# Copyright 2022 xiexianbin.cn
+# Copyright 2020 xiexianbin.cn
 # All Rights Reserved.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -11,24 +11,12 @@
 #   License for the specific language governing permissions and limitations
 #   under the License.
 
-"""test utils."""
-
-import unittest
-
-from cisctl import config
-from cisctl import client
+import os
 
 
-class HTTPTestCase(unittest.TestCase):
+CURRENT_PATH = os.getcwd()
 
-    def setUp(self):
-        pass
+# image after timeUploadedMs
+AFTER_TIMEUPLOADEDMS = int(os.environ.get('AFTER_TIMEUPLOADEDMS', 0))
 
-    def test_http_get(self):
-        headers = {
-            'Content-Type': 'application/text'
-        }
-        result, resp = client.http_get(
-            url='https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt',
-            headers=headers)
-        print(resp.split('\n'))
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG')

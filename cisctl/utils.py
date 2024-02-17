@@ -22,6 +22,49 @@ try:
 except Exception as _:  # noqa
     pass
 
+from cisctl import exception
+
+
+def arg(*args, **kwargs):
+    """Decorator for CLI args.
+
+    Example:
+
+    >>> @arg("name", help="Name of the new entity")
+    ... def entity_create(args):
+    ...     pass
+    """
+    def _decorator(func):
+        add_arg(func, *args, **kwargs)
+        return func
+    return _decorator
+
+
+def add_arg(func, *args, **kwargs):
+    """Bind CLI arguments to a shell.py `do_foo` function."""
+
+    if not hasattr(func, 'arguments'):
+        func.arguments = []
+
+    if (args, kwargs) not in func.arguments:
+        func.arguments.insert(0, (args, kwargs))
+
+
+def do_action_on_many(action, resources, success_msg, error_msg):
+    """Helper to run an action on many resources."""
+    failure_flag = False
+
+    for resource in resources:
+        try:
+            action(resource)
+            print(success_msg % resource)
+        except Exception as e:
+            failure_flag = True
+            print(str(e))
+
+    if failure_flag:
+        raise exception.CommandError(error_msg)
+
 
 def now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -39,11 +82,13 @@ def parse_repo_and_name(image) -> (str, str):
         - gcr.io/ml-pipeline/api-server
         - quay.io/metallb/controller
         - gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
+        - registry.k8s.io/addon-builder
     :return (repo, name): one of
         - ('k8s.gcr.io', 'pause-amd64')
         - ('gcr.io/ml-pipeline', 'api-server')
         - ('quay.io/metallb', 'controller')
         - ('gcr.io/knative-releases/knative.dev/eventing/cmd', 'webhook')
+        - ('registry.k8s.io', 'addon-builder')
     """
     t = image.split('/')
     return '/'.join(t[:-1]), t[-1]
@@ -57,11 +102,13 @@ def parse_registry_url_and_project(src_repo) -> (str, str):
         - gcr.io/ml-pipeline
         - quay.io/metallb
         - gcr.io/knative-releases/knative.dev/eventing/cmd
+        - registry.k8s.io/addon-builder
     :return (repo, name): one of
         - ('k8s.gcr.io', None)
         - ('gcr.io', 'ml-pipeline')
         - ('quay.io', 'metallb')
         - ('gcr.io', 'knative-releases/knative.dev/eventing/cmd')
+        - ('registry.k8s.io', 'addon-builder')
     """
     t = src_repo.split('/')
     if len(t) == 1:
@@ -101,6 +148,7 @@ def generate_dest_name(src_repo, name):
         - quay.io/metallb
         - gcr.io/knative-releases/knative.dev/eventing/cmd
         - gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory # channel_controller -> eventing-in_memory-channel_controller
+        - registry.k8s.io/addon-builder
     :param name: image name
     :return dest_image_name
     """
