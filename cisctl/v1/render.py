@@ -17,7 +17,7 @@ import os
 
 from jinja2 import Template
 
-from cisctl import config
+import cisctl
 from cisctl import utils
 
 
@@ -28,7 +28,7 @@ class Render(object):
 
     def readme(self, images_list, src_org, src_repo, dest_repo: str, git_repo: str):
         # for readme.md
-        in_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'template/README.md')
+        in_path = os.path.join(os.path.dirname(os.path.realpath(cisctl.__file__)), 'template/README.md')
         out_path = os.path.join(git_repo, 'README.md')
         with open(in_path, 'r') as in_file, open(out_path, 'w') as out_file:
             tmpl = Template(in_file.read())
