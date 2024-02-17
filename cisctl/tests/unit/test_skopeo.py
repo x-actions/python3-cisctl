@@ -35,7 +35,7 @@ class SkopeoTestCase(unittest.TestCase):
     def test_sync_registry_k8s_io(self):
         src_repo = 'registry.k8s.io'
         dest_repo = 'docker.io/registryk8s'
-        name = 'addon-builder'
+        name = 'csi/csi-attacher'
         src_transport = 'registry.k8s.io'
         dest_transport = 'docker'
 

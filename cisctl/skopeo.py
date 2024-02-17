@@ -67,7 +67,7 @@ class Skopeo(object):
               f'--src {src_transport} --dest {dest_transport} {src_repo}/{name} {dest_repo}'
         _ = self.bash.run(cmd)
 
-    def list_tags(self, transport, repo, name) -> {}:
+    def list_tags(self, transport: str, repo: str, name: str) -> dict:
         """ List tags in the transport/repository specified by the REPOSITORY-NAME
 
         :param transport: docker
@@ -77,6 +77,8 @@ class Skopeo(object):
         skopeo list-tags docker://k8s.gcr.io/pause-amd64 | jq -c
         :return: {"Repository":"k8s.gcr.io/pause-amd64","Tags":["0.0.16"]}
         """
+        if repo.startswith('docker.io/'):
+            name = name.replace('/', '-')
         cmd = f'skopeo list-tags {transport}://{repo}/{name} | jq -c'
         code, stdout, stderr = self.bash.run(cmd, result=True)
         if code == 0 and stdout is not None:

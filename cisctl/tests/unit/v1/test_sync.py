@@ -15,13 +15,13 @@
 
 import unittest
 
-from cisctl.shell import CIS
+from cisctl.v1.sync import CIS
 
 
 class CISTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.cis = CIS()
+        self.cis = CIS(src_transport='docker', dest_transport='docker')
 
     def test_gcrio_sort_tags(self):
         src_repo, name = 'k8s.gcr.io', 'kube-apiserver'
@@ -63,3 +63,7 @@ class CISTestCase(unittest.TestCase):
     def test_sync_image_distroless_base(self):
         image = 'gcr.io/distroless/base'
         print(self.cis.sync_image(image))
+
+    def test_sync_image_k8s_csi_csi_attacher(self):
+        image = 'registry.k8s.io/csi/csi-attacher'
+        print(self.cis.sync_image(image, 'docker.io/registryk8s'))

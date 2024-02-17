@@ -70,6 +70,7 @@ class CIS(object):
         - quay.io/metallb/controller
         - gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
         - registry.k8s.io/addon-builder
+        - registry.k8s.io/csi/csi-attacher
         :param dest_repo(str): e.g. docker.io/gcmirrors
         """
         logger.debug(f'Begin to sync image: [{image}], sub pid is [{os.getpid()}]')
