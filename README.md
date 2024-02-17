@@ -13,27 +13,30 @@ Github Actions for [Container Images Sync](https://github.com/marketplace/action
         GIT_ORG: "x-mirrors"
         GIT_REPO: "gcr.io"
         GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SRC_IMAGE_LIST_URL: "https://raw.githubusercontent.com/x-mirrors/gcr.io/main/k8s.txt"
+        SRC_IMAGE_LIST_URL: "https://github.com/x-mirrors/gcr.io/raw/main/registry.k8s.io/all-repos.txt"
         DEST_REPO: "docker.io/gcmirrors"
         SRC_TRANSPORT: "docker"
         DEST_TRANSPORT: "docker"
         DEST_TRANSPORT_USER: "user"
         DEST_TRANSPORT_PASSWORD: "password"
+        THREAD_POOL_NUM: 2
+        AFTER_TIMEUPLOADEDMS: 0
         LOG_LEVEL: "DEBUG"
 ```
 
 Environment Variables:
 
-- GIT_ORG: github org
-- GIT_REPO: github repo
-- GIT_TOKEN: github token
-- SRC_IMAGE_LIST_URL: SRC_IMAGE_LIST_URL, default: "https://raw.githubusercontent.com/x-mirrors/gcr.io/main/k8s.txt"
-- DEST_REPO: DEST register REPO
-- SRC_TRANSPORT: SRC TRANSPORT
-- DEST_TRANSPORT: DEST TRANSPORT
-- DEST_TRANSPORT_USER: user
-- DEST_TRANSPORT_PASSWORD: "password"
-- THREAD_POOL_NUM: sync thread pool num
+- `GIT_ORG`: github org
+- `GIT_REPO`: github repo
+- `GIT_TOKEN`: github token
+- `SRC_IMAGE_LIST_URL`: SRC_IMAGE_LIST_URL, default: "https://github.com/x-mirrors/gcr.io/raw/main/registry.k8s.io/all-repos.txt"
+- `DEST_REPO`: DEST register REPO
+- `SRC_TRANSPORT`: SRC TRANSPORT
+- `DEST_TRANSPORT`: DEST TRANSPORT
+- `DEST_TRANSPORT_USER`: user
+- `DEST_TRANSPORT_PASSWORD`: "password"
+- `THREAD_POOL_NUM`: sync thread pool num
+- `AFTER_TIMEUPLOADEDMS`: only sync images which time after timestamps
 
 ## Dev and Test
 
@@ -42,28 +45,23 @@ Environment Variables:
 ```
 # install
 pip3 install -r requirements.txt
-python3 setup.py install
-# or
-pip3 install python3-cisctl
 
 # set env
 export GIT_ORG="x-mirrors"
 export GIT_REPO="gcr.io"
 export GIT_TOKEN='${{ secrets.GITHUB_TOKEN }}'
-export SRC_IMAGE_LIST_URL="https://raw.githubusercontent.com/x-mirrors/gcr.io/main/k8s.txt"
+export SRC_IMAGE_LIST_URL="https://github.com/x-mirrors/gcr.io/raw/main/registry.k8s.io/all-repos.txt"
 export DEST_REPO="docker.io/gcmirrors"
 export SRC_TRANSPORT="docker"
 export DEST_TRANSPORT="docker"
 export DEST_TRANSPORT_USER="xianbinxie"
 export DEST_TRANSPORT_PASSWORD="<passwords>"
 
-# run sync
-cisctl sync
-
 # dev
 export PYTHONPATH=$(pwd)
 python3 cisctl/shell.py --help
 python3 cisctl/shell.py help sync
+python3 cisctl/shell.py sync xxx
 ```
 
 - tests

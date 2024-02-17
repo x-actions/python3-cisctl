@@ -13,7 +13,7 @@ inputs:
     default: 'gcmirrors'
   SRC_IMAGE_LIST_URL:
     description: 'SRC_IMAGE_LIST_URL'
-    default: 'https://raw.githubusercontent.com/x-mirrors/gcr.io/main/k8s.txt'
+    default: 'https://github.com/x-mirrors/gcr.io/raw/main/registry.k8s.io/all-repos.txt'
   DEST_REPO:
     description: 'DEST register REPO'
     default: 'docker.io/gcmirrors'

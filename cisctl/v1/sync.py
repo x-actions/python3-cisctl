@@ -30,10 +30,14 @@ from cisctl.skopeo import Skopeo
 
 class CIS(object):
     """sync Container Images."""
-    def __init__(self):
+    def __init__(self, src_transport: str, dest_transport: str, after_timeuploadedms: int = 0):
         self._skopeo = Skopeo()
         self._docker = DockerV2()
         self._source_registry = None
+
+        self.src_transport = src_transport
+        self.dest_transport = dest_transport
+        self.after_timeuploadedms = after_timeuploadedms
 
     def init_source_registry_api(self, registry_url, repo=None):
         """ init source registry api
@@ -57,15 +61,16 @@ class CIS(object):
             elif registry_url.startswith('registry.k8s.io'):
                 self._source_registry = K8sRegister(registry_url='https://registry.k8s.io', project=repo)
 
-    def sync_image(self, image):
+    def sync_image(self, image: str, dest_repo: str):
         """ sync image
 
         :param image: one of
-          - k8s.gcr.io/pause
-          - gcr.io/ml-pipeline/api-server
-          - quay.io/metallb/controller
-          - gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
-          - registry.k8s.io/addon-builder
+        - k8s.gcr.io/pause
+        - gcr.io/ml-pipeline/api-server
+        - quay.io/metallb/controller
+        - gcr.io/knative-releases/knative.dev/eventing/cmd/webhook
+        - registry.k8s.io/addon-builder
+        :param dest_repo(str): e.g. docker.io/gcmirrors
         """
         logger.debug(f'Begin to sync image: [{image}], sub pid is [{os.getpid()}]')
         src_repo, name = utils.parse_repo_and_name(image)
@@ -79,7 +84,7 @@ class CIS(object):
         _, src_sort_tags, src_tag_digest_dict = self._source_registry.sort_tags(name)
         src_sort_tags.reverse()
 
-        target_image_name = f'{config.DEST_REPO}/{dest_name}'
+        target_image_name = f'{dest_repo}/{dest_name}'
         result, synced_tags_with_timestamp, synced_tag_digest_dict = \
             self._docker.sort_tags(target_image_name)
         last_tag, last_timestamp = self._docker.last_tag(target_image_name, synced_tags_with_timestamp)
@@ -100,7 +105,7 @@ class CIS(object):
             src_tag_digest = src_tag_digest_dict.get(src_tag)
             synced_tag_digest = synced_tag_digest_dict.get(src_tag)
 
-            if do_sync_flag is False and int(src_uploaded_timestamp) > config.AFTER_TIMEUPLOADEDMS:
+            if do_sync_flag is False and int(src_uploaded_timestamp) > self.after_timeuploadedms:
                 # check already synced flag
                 if synced_flag is False and src_tag != 'latest' and src_tag in synced_tags:
                     synced_flag = True
@@ -139,20 +144,21 @@ class CIS(object):
 
             self._skopeo.copy(
                 src_repo=src_repo,
-                dest_repo=config.DEST_REPO,
+                dest_repo=dest_repo,
                 name=name,
                 tag=src_tag,
                 dest_name=dest_name,
-                src_transport=config.SRC_TRANSPORT,
-                dest_transport=config.DEST_TRANSPORT)
+                src_transport=self.src_transport,
+                dest_transport=self.dest_transport)
 
         return f'{"@@".join([_tag for (_tag, _) in src_sort_tags])}@@@{dest_name}'
 
-    def do_sync(self):
+    def do_sync(self, src_image_list_url: str, thread_pool_size: int,
+                dest_repo: str, job_batch_size: int, debug: bool):
         headers = {
             'Content-Type': 'application/text'
         }
-        result, resp = client.http_get(url=config.SRC_IMAGE_LIST_URL, headers=headers)
+        result, resp = client.http_get(url=src_image_list_url, headers=headers)
         _target_images_list = resp.split('\n')
         target_images_list = []
         for image in _target_images_list:
@@ -164,28 +170,28 @@ class CIS(object):
         result_images_list = []
 
         logger.info(f'init multiprocessing pool, main pid is [{os.getpid()}]')
-        p = Pool(config.THREAD_POOL_NUM)
+        p = Pool(thread_pool_size)
         subprocess_result = []
 
         # fix Docker API Rate Limiting
-        if len(target_images_list) > 180 and config.DEST_REPO.startswith("docker.io"):
-            interval_hour = 24 / config.JOB_BATCH_COUNT
+        if len(target_images_list) > 180 and dest_repo.startswith("docker.io"):
+            interval_hour = 24 / job_batch_size
             batch_num = int(time.localtime().tm_hour / interval_hour)
-            images_count_per_job = int(len(target_images_list) / config.JOB_BATCH_COUNT) + 1
+            images_count_per_job = int(len(target_images_list) / job_batch_size) + 1
 
             start_index = batch_num * images_count_per_job
             end_index = (batch_num + 1) * images_count_per_job - 1
             target_images_list = target_images_list[start_index:end_index+1]
             logger.info(
                 f'BATCH Jobs matched, start_index is {start_index}, end_index is {end_index}, '
-                f'JOB_BATCH_COUNT is {config.JOB_BATCH_COUNT}, batch_num is {batch_num}, '
+                f'JOB_BATCH_COUNT is {job_batch_size}, batch_num is {batch_num}, '
                 f'images_count_per_job is {images_count_per_job}, begin to sync image size '
                 f'is {len(target_images_list)}')
 
         for image in target_images_list:
             if image.startswith('gcr.io/google-containers'):
                 image = image.replace('gcr.io/google-containers', 'k8s.gcr.io')
-            subprocess_result.append(p.apply_async(self.sync_image, args=(image,)))
+            subprocess_result.append(p.apply_async(self.sync_image, args=(image, dest_repo,)))
 
         for result in subprocess_result:
             r = result.get()

@@ -28,5 +28,7 @@ class HTTPTestCase(unittest.TestCase):
         headers = {
             'Content-Type': 'application/text'
         }
-        result, resp = client.http_get(url=config.SRC_IMAGE_LIST_URL, headers=headers)
+        result, resp = client.http_get(
+            url='https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt',
+            headers=headers)
         print(resp.split('\n'))
