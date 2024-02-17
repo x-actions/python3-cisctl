@@ -8,11 +8,9 @@ Github Actions for [Container Images Sync](https://github.com/marketplace/action
 
 ```
     - name: Container Images Sync
-      uses: x-actions/python3-cisctl@v1
+      uses: x-actions/python3-cisctl@v2
       env:
-        GIT_ORG: "x-mirrors"
         GIT_REPO: "gcr.io"
-        GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SRC_IMAGE_LIST_URL: "https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt"
         DEST_REPO: "docker.io/gcmirrors"
         SRC_TRANSPORT: "docker"
@@ -26,9 +24,7 @@ Github Actions for [Container Images Sync](https://github.com/marketplace/action
 
 Environment Variables:
 
-- `GIT_ORG`: github org
 - `GIT_REPO`: github repo
-- `GIT_TOKEN`: github token
 - `SRC_IMAGE_LIST_URL`: SRC_IMAGE_LIST_URL, default: "https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt"
 - `DEST_REPO`: DEST register REPO
 - `SRC_TRANSPORT`: SRC TRANSPORT
@@ -47,9 +43,7 @@ Environment Variables:
 pip3 install -r requirements.txt
 
 # set env
-export GIT_ORG="x-mirrors"
 export GIT_REPO="gcr.io"
-export GIT_TOKEN='${{ secrets.GITHUB_TOKEN }}'
 export SRC_IMAGE_LIST_URL="https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt"
 export DEST_REPO="docker.io/gcmirrors"
 export SRC_TRANSPORT="docker"

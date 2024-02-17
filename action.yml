@@ -2,12 +2,6 @@ name: 'Container Images Sync'
 description: 'Container Images Sync'
 author: 'xiexianbin <me@xiexianbin>'
 inputs:
-  GIT_TOKEN:
-    description: 'github token'
-    default: ''
-  GIT_ORG:
-    description: 'github org'
-    default: 'x-mirrors'
   GIT_REPO:
     description: 'github repo'
     default: 'gcmirrors'

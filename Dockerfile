@@ -40,7 +40,7 @@ RUN apt update && \
     rm go-containerregistry_Linux_x86_64.tar.gz && \
     mv gcrane /usr/local/bin/ && \
     # install python3-cisctl
-    git clone https://github.com/x-actions/python3-cisctl.git -b main && \
+    git clone https://github.com/x-actions/python3-cisctl.git -b feature/v2 && \
     cd python3-cisctl && \
     pip3 install -r requirements.txt && \
     python3 setup.py install

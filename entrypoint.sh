@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-export GIT_TOKEN=${GIT_TOKEN}
-export GIT_ORG=${GIT_ORG}
 export GIT_REPO=${GIT_REPO}
 
 echo "## Check Package Version ##################"
