@@ -53,7 +53,7 @@ from cisctl.v1 import sync
 @utils.arg(
     '--src-image-list-url', metavar='<url>',
     help='src image list url',
-    default="https://github.com/x-mirrors/gcr.io/raw/main/registry.k8s.io/all-repos.txt")
+    default="https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt")
 @utils.arg(
     '--thread-pool-size', dest='thread_pool_size', metavar='<integer>', type=int, default=2,
     help='thread pool size.')
@@ -67,7 +67,7 @@ from cisctl.v1 import sync
 @utils.arg(
     '--src-image-list-url', metavar='<url>',
     help='src image list url',
-    default="https://github.com/x-mirrors/gcr.io/raw/main/registry.k8s.io/all-repos.txt")
+    default="https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt")
 @utils.arg(
     '--after-timeuploadedms', dest='after_timeuploadedms', metavar='<integer>', type=int, default=0,
     help='job batch size.')
@@ -84,7 +84,7 @@ def do_sync(args):
 
     result_images_list, src_org, src_repo = _cis.do_sync(
         src_image_list_url=args.src_image_list_url if args.src_image_list_url else os.environ.get(
-            'SRC_IMAGE_LIST_URL', 'https://github.com/x-mirrors/gcr.io/raw/main/registry.k8s.io/all-repos.txt'),
+            'SRC_IMAGE_LIST_URL', 'https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt'),
         thread_pool_size=args.thread_pool_size if args.thread_pool_size else int(os.environ.get('THREAD_POOL_NUM', 2)),
         dest_repo=_dest_repo,
         job_batch_size=args.job_batch_size if args.job_batch_size else int(os.environ.get('JOB_BATCH_COUNT', 3)),  # Only work when source is docker, because https://docs.docker.com/docker-hub/api/latest/#tag/rate-limiting

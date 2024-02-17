@@ -13,7 +13,7 @@ LABEL "homepage"="http://github.com/x-actions/python3-cisctl"
 LABEL "maintainer"="xiexianbin<me@xiexianbin.cn>"
 
 LABEL "Name"="Container Images Sync"
-LABEL "Version"="1.2.1"
+LABEL "Version"="2.0.0"
 
 ENV LC_ALL C.UTF-8
 ENV LANG en_US.UTF-8
@@ -27,10 +27,10 @@ RUN apt update && \
     ln -s /usr/lib/go-1.20/bin/go /usr/bin/go && \
     export GOPATH=/gopath && \
     mkdir -p $GOPATH/src/github.com/containers && \
-    wget -O skopeo-1.13.3.tar.gz https://github.com/containers/skopeo/archive/refs/tags/v1.13.3.tar.gz && \
-    tar -zxvf skopeo-1.13.3.tar.gz -C $GOPATH/src/github.com/containers/ && \
+    wget -O skopeo-1.14.2.tar.gz https://github.com/containers/skopeo/archive/refs/tags/v1.14.2.tar.gz && \
+    tar -zxvf skopeo-1.14.2.tar.gz -C $GOPATH/src/github.com/containers/ && \
     cd $GOPATH/src/github.com/containers && \
-    mv skopeo-1.13.3 skopeo && \
+    mv skopeo-1.14.2 skopeo && \
     cd skopeo && \
     DISABLE_DOCS=1 make bin/skopeo && \
     mv bin/skopeo /usr/local/bin/ && \
@@ -40,7 +40,7 @@ RUN apt update && \
     rm go-containerregistry_Linux_x86_64.tar.gz && \
     mv gcrane /usr/local/bin/ && \
     # install python3-cisctl
-    git clone https://github.com/x-actions/python3-cisctl.git -b feature/registry.k8s.io && \
+    git clone https://github.com/x-actions/python3-cisctl.git -b main && \
     cd python3-cisctl && \
     pip3 install -r requirements.txt && \
     python3 setup.py install
