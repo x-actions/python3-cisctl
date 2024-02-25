@@ -24,11 +24,11 @@ class RegisterBaseAPIV2(object):
     def list_tags(self, name, **kwargs) -> Any:
         raise NotImplemented
 
-    def sort_tags(self, name) -> (bool, List[Tuple[str, int]], Dict):
+    def sort_tags(self, name) -> Tuple[bool, List[Tuple[str, int]], Dict]:
         """ return sorted tags by timestamp desc
 
         :param name: image name
-        :return: (bool, List[Tuple[str, int]], Dict)
+        :return: Tuple[bool, List[Tuple[str, int]], Dict]
         Dict is image's tag and sha256 map
         e.g. (True, [(tag1, last_update_timestamp), ...], {tag1: sha2561, ...})
         """

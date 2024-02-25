@@ -28,9 +28,11 @@ class K8sRegister(RegisterBaseAPIV2):
     def __init__(self, registry_url: str='https://registry.k8s.io', project: str=None):
         super().__init__()
         self.base_url = registry_url.replace('https://', '').replace('/', '')
+        if project:
+            self.base_url = f'{self.base_url}/{project}'
         self.bash = Bash()
 
-    def list_tags(self, name, n=10, next='') -> {}:  # noqa
+    def list_tags(self, name, n=10, next='') -> Dict:
         """ list special image tags
         e.g.
           gcrane ls --json registry.k8s.io/addon-builder | jq .
@@ -57,7 +59,7 @@ class K8sRegister(RegisterBaseAPIV2):
             return True, json.loads(stdout)
         return False, {}
 
-    def sort_tags(self, name) -> (bool, List[Tuple[str, int]], Dict):
+    def sort_tags(self, name) -> Tuple[bool, List[Tuple[str, int]], Dict]:
         """ sort image tags dict to Z-A
 
         :param name: addon-builder or addon-manager/kube-addon-manager

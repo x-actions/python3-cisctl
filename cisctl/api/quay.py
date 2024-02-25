@@ -52,7 +52,7 @@ class QuayRegisterV2(RegisterBaseAPIV2):
         """
         return self.skopeo.list_tags(transport='docker', repo=f'quay.io/{self.repo}', name=name)
 
-    def sort_tags(self, name) -> (bool, List[Tuple[str, int]], Dict):
+    def sort_tags(self, name) -> Tuple[bool, List[Tuple[str, int]], Dict]:
         """ sort image tags dict to Z-A
 
         :param name: like controller

@@ -45,7 +45,7 @@ class DockerV2(RegisterBaseAPIV2):
         url = f'{self.base_url}/{name}/manifests/{digest}'
         return client.http_delete(url)
 
-    def list_tags(self, name, n=10, next='') -> {}:  # noqa
+    def list_tags(self, name, n=10, next='') -> Dict:
         """ list special image tags
         e.g.
           curl https://registry.hub.docker.com/v2/repositories/gcmirrors/kube-apiserver/tags
@@ -118,7 +118,7 @@ class DockerV2(RegisterBaseAPIV2):
         }
         return result, response
 
-    def last_tag(self, name, sort_tags: List[Tuple[str, int]] = None) -> (str, int):
+    def last_tag(self, name, sort_tags: List[Tuple[str, int]] = None) -> Tuple[str, int]:
         """ get docker image last tag pushed millisecond timestamp
 
         :param name: gcmirrors/kube-apiserver
@@ -133,7 +133,7 @@ class DockerV2(RegisterBaseAPIV2):
         else:
             return None, None
 
-    def sort_tags(self, name) -> (bool, List[Tuple[str, int]], Dict):
+    def sort_tags(self, name) -> Tuple[bool, List[Tuple[str, int]], Dict]:
         result, resp = self.list_tags(name)
         if result:
             _tag_timestamp_dict = dict()
