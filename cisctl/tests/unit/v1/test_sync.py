@@ -61,9 +61,10 @@ class CISTestCase(unittest.TestCase):
         print(self.cis.sync_image(image))
 
     def test_sync_image_distroless_base(self):
-        image = 'gcr.io/distroless/base'
-        print(self.cis.sync_image(image))
+        print(self.cis.sync_image('gcr.io/distroless/base', 'docker.io/gcriodistroless'))
+
+    def test_sync_image_thanos(self):
+        print(self.cis.sync_image('quay.io/thanos/thanos', 'docker.io/quayiothanos'))
 
     def test_sync_image_k8s_csi_csi_attacher(self):
-        image = 'registry.k8s.io/csi/csi-attacher'
-        print(self.cis.sync_image(image, 'docker.io/registryk8s'))
+        print(self.cis.sync_image('registry.k8s.io/csi/csi-attacher', 'docker.io/registryk8s'))

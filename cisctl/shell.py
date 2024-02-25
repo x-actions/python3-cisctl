@@ -13,6 +13,7 @@
 
 """
 Command-line interface for Sync Container Images.
+ref: https://github.com/openstack/python-novaclient/blob/master/novaclient/shell.py
 """
 
 import argparse

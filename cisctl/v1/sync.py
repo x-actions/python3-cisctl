@@ -75,7 +75,7 @@ class CIS(object):
         """
         logger.debug(f'Begin to sync image: [{image}], sub pid is [{os.getpid()}]')
         src_repo, name = utils.parse_repo_and_name(image)
-        dest_name = utils.generate_dest_name(src_repo, name)
+        dest_name = utils.generate_dest_name(src_repo, dest_repo, name)
         if '/' in src_repo:
             registry_url, repo = utils.parse_registry_url_and_project(src_repo)
             self.init_source_registry_api(registry_url, repo)

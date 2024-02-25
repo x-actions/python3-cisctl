@@ -13,7 +13,6 @@
 
 import os
 
-from cisctl import config
 from cisctl import utils
 from cisctl.v1 import render
 from cisctl.v1 import sync

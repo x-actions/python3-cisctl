@@ -77,7 +77,7 @@ class GoogleContainerRegisterV2(RegisterBaseAPIV2):
 
         return client.http_get(url, None, headers)
 
-    def sort_tags(self, name) -> (bool, List[Tuple[str, int]], Dict):
+    def sort_tags(self, name) -> Tuple[bool, List[Tuple[str, int]], Dict]:
         """ sort image tags dict to Z-A
 
         :param name: kube-apiserver or ml-pipeline/api-server

@@ -40,3 +40,4 @@ class Render(object):
                 'src_repo': src_repo,
                 'dest_repo': dest_repo.split('/')[-1]
             }))
+        print(f'render README.md to {out_path}')

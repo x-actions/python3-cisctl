@@ -3,8 +3,8 @@ description: 'Container Images Sync'
 author: 'xiexianbin <me@xiexianbin>'
 inputs:
   GIT_REPO:
-    description: 'github repo'
-    default: 'gcmirrors'
+    description: 'https://github.com/x-mirrors/gcr.io, github repo name'
+    default: 'gcr.io'
   SRC_IMAGE_LIST_URL:
     description: 'SRC_IMAGE_LIST_URL'
     default: 'https://raw.githubusercontent.com/x-mirrors/gcr.io/main/registry.k8s.io/all-repos.txt'

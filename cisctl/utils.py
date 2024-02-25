@@ -141,7 +141,7 @@ def date2timestamp(date_time) -> int:
         return int(dt_utc.timestamp() * 1000)
 
 
-def generate_dest_name(src_repo, name):
+def generate_dest_name(src_repo: str, dest_repo: str, name: str):
     """ generate dest repo image name
 
     :param src_repo: one of
@@ -152,9 +152,12 @@ def generate_dest_name(src_repo, name):
         - gcr.io/knative-releases/knative.dev/eventing/cmd/in_memory # channel_controller -> eventing-in_memory-channel_controller
         - registry.k8s.io/addon-builder
         - registry.k8s.io/csi/csi-attacher
+    :param dest_repo: e.g. docker.io/quayiothanos
     :param name: image name
     :return dest_image_name
     """
+    if src_repo.replace('.', '').replace('/', '') == dest_repo.replace('docker.io/', ''):
+        return name
     if '/cmd' in src_repo:
         t = src_repo.split('/')
         if t[-1] == 'cmd':
